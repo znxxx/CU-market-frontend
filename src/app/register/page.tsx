@@ -5,19 +5,19 @@ import { useRouter } from "next/navigation";
 
 function Register() {
   interface FormValues {
-    student_id?: string;
-    fname?: string;
-    lname?: string;
+    studentId?: any;
+    firstName?: string;
+    lastName?: string;
     email?: string;
     password?: string;
     confirmpassword?: string;
   }
   const router = useRouter();
   const defaultdata = {
-    student_id: "",
+    studentId: 0,
     email: "",
-    fname: "",
-    lname: "",
+    firstName: "",
+    lastName: "",
     password: "",
     confirmpassword: "",
   };
@@ -29,40 +29,55 @@ function Register() {
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
+    const parsedValue =
+      name === "studentId" ? (value ? parseInt(value, 10) : 0) : value;
     setData({
       ...data,
-      [name]: value,
+      [name]: parsedValue,
     });
-    console.log(data);
-    setFormErrors(validate({ ...data, [name]: value }));
+    setFormErrors(validate({ ...data, [name]: parsedValue }));
   };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setFormErrors(validate(data));
     if (Object.keys(formErrors).length === 0) {
-      console.log(data);
+      const { confirmpassword, ...dataToSend } = data;
+      console.log(dataToSend);
+
+      fetch("http://localhost:4000/auth/signup/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataToSend),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          console.log("res", res);
+        })
+        .catch((err) => {
+          console.error("err", err);
+        });
     }
   };
 
   const validate = (values: {
-    student_id: string;
+    studentId: any;
     email: string;
-    fname: string;
-    lname: string;
+    firstName: string;
+    lastName: string;
     password: any;
     confirmpassword: any;
   }): FormValues => {
     const errors: FormValues = {};
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-    if (!values.student_id) {
-      errors.student_id = "Student ID is required!";
+    if (!values.studentId) {
+      errors.studentId = "Student ID is required!";
     }
-    if (!values.fname) {
-      errors.fname = "First name is required!";
+    if (!values.firstName) {
+      errors.firstName = "First name is required!";
     }
-    if (!values.lname) {
-      errors.lname = "Last name is required";
+    if (!values.lastName) {
+      errors.lastName = "Last name is required";
     }
     if (!values.email) {
       errors.email = "Email is required";
@@ -104,13 +119,13 @@ function Register() {
         <input
           type="text"
           id="student-id"
-          name="student_id"
-          value={data.student_id}
+          name="studentId"
+          value={data.studentId !== 0 ? data.studentId : ''}
           onChange={handleInputChange}
           className="text-neutral-300 text-xl font-medium self-stretch shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] mt-2.5 pt-5 pb-5 px-5 rounded-[50px] max-md:max-w-full max-md:pl-2"
         />
-        {formErrors.student_id && (
-          <p className="text-red-500 ml-4">{formErrors.student_id}</p>
+        {formErrors.studentId && (
+          <p className="text-red-500 ml-4">{formErrors.studentId}</p>
         )}
         <label className="text-white text-xl font-medium ml-7 mt-3 max-md:ml-2.5">
           Email
@@ -132,29 +147,29 @@ function Register() {
         </label>
         <input
           type="text"
-          id="firstname"
-          name="fname"
-          value={data.fname}
+          id="firstName"
+          name="firstName"
+          value={data.firstName}
           onChange={handleInputChange}
           className="text-neutral-300 text-xl font-medium self-stretch shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] mt-2.5 pt-6 pb-5 px-5 rounded-[50px] max-md:max-w-full max-md:pl-2"
         />
-        {formErrors.fname && (
-          <p className="text-red-500 ml-4">{formErrors.fname}</p>
+        {formErrors.firstName && (
+          <p className="text-red-500 ml-4">{formErrors.firstName}</p>
         )}
 
         <label className="text-white text-xl font-medium ml-7 mt-3 max-md:ml-2.5">
-          Lastname
+          lastname
         </label>
         <input
           type="text"
-          id="lastname"
-          name="lname"
-          value={data.lname}
+          id="lastName"
+          name="lastName"
+          value={data.lastName}
           onChange={handleInputChange}
           className="text-neutral-300 text-xl font-medium self-stretch shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] mt-2.5 pt-6 pb-5 px-5 rounded-[50px] max-md:max-w-full max-md:pl-2"
         />
-        {formErrors.lname && (
-          <p className="text-red-500 ml-4">{formErrors.lname}</p>
+        {formErrors.lastName && (
+          <p className="text-red-500 ml-4">{formErrors.lastName}</p>
         )}
 
         <label className="text-white text-xl font-medium ml-7 mt-3 max-md:ml-2.5">
@@ -186,7 +201,10 @@ function Register() {
           <p className="text-red-500 ml-4">{formErrors.confirmpassword}</p>
         )}
 
-        <button className="shadow-2xl self-center flex w-[350px] max-w-full flex-col mt-12 max-md:mt-10">
+        <button
+          className="shadow-2xl self-center flex w-[350px] max-w-full flex-col mt-12 max-md:mt-10"
+          onClick={handleSubmit}
+        >
           <div className="bg-[#FF8BBC] self-stretch flex w-full grow flex-col rounded-[50px] py-5 shadow-black shadow-inner">
             <span className="text-stone-100 text-xl font-medium self-center">
               Register
