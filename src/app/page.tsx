@@ -1,7 +1,8 @@
-import Image from 'next/image'
 
-export default function Home() {
+
+function Home() {
   return (
-   <div className='font-black'>eiei</div>
+    <></>
   )
 }
+export default Home
