@@ -1,13 +1,5 @@
-'use client'
-import { link } from "fs";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-
 function Navbar() {
-  const router = useRouter();
-  const linkPage = (page: string) => {
-    router.push(page);
-  };
   return (
     <>
       <nav className="flex w-full items-start justify-between gap-5 px-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
@@ -27,17 +19,15 @@ function Navbar() {
             </div>
           </div>
         </div>
-        <button onClick={() => linkPage('/')}>
-          <div className="self-center flex flex-col my-auto mt-[10px]">
-            <Image
-              src="/images/Cu-blackmarket-logo.svg"
-              alt="logo"
-              className="self-center"
-              width={195}
-              height={115}
-            />
-          </div>
-        </button>
+        <div className="self-center flex flex-col my-auto mt-[10px]">
+          <Image
+            src="/images/Cu-blackmarket-logo.svg"
+            alt="logo"
+            className="self-center"
+            width={195}
+            height={115}
+          />
+        </div>
         <div className="self-center flex w-[77px] h-[77px] flex-col my-auto mr-5">
           <Image
             src="/images/icons/CU Black Market icon.svg"
@@ -75,5 +65,4 @@ function Navbar() {
     </>
   );
 }
-
-export default Navbar;
+export default Navbar

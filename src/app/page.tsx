@@ -4,7 +4,7 @@ function Home(props: any) {
   return (
     <main className="bg-slate-700">
       <header className="bg-slate-600 self-stretch flex w-full flex-col pb-2 max-md:max-w-full">
-        <Navbar/>
+       <Navbar     />
       </header>
       <section className="flex-col overflow-hidden self-stretch relative z-[1] flex min-h-[458px] w-full -mt-2 pt-96 pb-5 px-5 max-md:max-w-full">
         {/* <img
