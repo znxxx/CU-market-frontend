@@ -1,9 +1,9 @@
 import Image from "next/image";
 export function ProductBox() {
   return <div className="max-md:max-w-full max-md:mt-10 mt-5">
-              <div className="gap-10 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
+              <div className="flex max-md:flex-col max-md:items-stretch max-md:gap-0">
                 <div className="flex flex-col items-stretch max-md:w-full max-md:ml-0">
-                  <div className="shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B] flex w-full grow flex-col flex-1 mx-[10px] pl-2.5 pr-2.5 py-3 rounded-3xl max-md:mt-10">
+                  <div className="shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B] flex w-full grow flex-col flex-1 mx-[10px] lg:mx-[5px] 2xl:mx-[20px] pl-2.5 pr-2.5 py-3 rounded-3xl max-md:mt-10">
                     <div>
                       <Image alt="Sample img" className="aspect-auto object-cover object-center w-full overflow-hidden self-stretch rounded-xl" src="/images/Rectangle 31.png" width={204} height={118} />
                     </div>
