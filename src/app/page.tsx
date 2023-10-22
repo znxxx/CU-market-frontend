@@ -15,7 +15,7 @@ function Home(props: any) {
           <Slider />
         </div>
       </section>
-      <section className="flex justify-between mt-8 max-md:max-w-full max-md:flex-wrap pb-10">
+      <section className="flex justify-between mt-6 max-md:max-w-full max-md:flex-wrap pb-10">
         <div className="left-boxes">
           <div
             id="today's picks"
