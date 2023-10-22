@@ -14,6 +14,11 @@ body {
   font-family: 'MavenPro', sans-serif;
 }
 
+.gradient-bg {
+  background: linear-gradient(180deg, #FF8BBC 0%, #6A5AFA 100%);
+}
+
+
 
 /* :root {
   --foreground-rgb: 0, 0, 0;
