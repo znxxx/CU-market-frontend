@@ -28,10 +28,10 @@ function Navbar() {
             height={115}
           />
         </div>
-        <div className="self-center flex w-[77px] h-[77px] flex-col my-auto mr-5">
+        <div className="self-center flex w-[77px] h-[77px] flex-col my-auto mr-4">
           <Image
             src="/images/icons/CU Black Market icon.svg"
-            alt="logo"
+            alt="profile-logo"
             className=""
             width={77}
             height={77}
@@ -41,7 +41,7 @@ function Navbar() {
       <nav className="self-stretch flex w-full flex-col mt-4 px-5 py-3.5 max-md:max-w-full gradient-bg">
         <div className="flex w-[366px] max-w-full items-start justify-between gap-5 ml-3 max-md:justify-center max-md:ml-2.5">
           <a
-            href="#"
+            href="/"
             className="text-stone-100 text-center text-2xl font-medium self-center my-auto"
           >
             HOME
