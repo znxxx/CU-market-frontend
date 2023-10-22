@@ -2,22 +2,18 @@
 import { ProductBox } from "../../components/ProductBox";
 import Navbar from "../../components/Navbar";
 import Image from "next/image";
-
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import "../../styles/styles.css";
-import Swiper from "swiper";
-import { Navigation, Pagination } from "swiper/modules";
+import Slider from "../../components/slider";
 
 function Home(props: any) {
   return (
     <main className="bg-[#353966] min-h-screen">
-      <header className="bg-[#40477B] self-stretch flex w-full flex-col pb-2 max-md:max-w-full">
+      <header className="bg-[#40477B] self-stretch flex w-full flex-col max-md:max-w-full">
         <Navbar />
       </header>
-      <section className="flex-col overflow-hidden self-stretch relative z-[1] flex w-full -mt-2 pt-[500px] pb-5 px-5 max-md:max-w-full bg-white">
-        {/* Content */}
+      <section className="">
+        <div>
+          <Slider />
+        </div>
       </section>
       <section className="flex justify-between mt-8 max-md:max-w-full max-md:flex-wrap pb-10">
         <div className="left-boxes">
