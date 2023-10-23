@@ -64,7 +64,7 @@ function Navbar() {
           </a>
           <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
           <a
-            href="#"
+            href="/u/sell"
             className="text-stone-100 text-center text-2xl font-medium self-center my-auto"
           >
             SELLING
