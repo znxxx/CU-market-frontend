@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import DatePicker from "react-datepicker";
 import Image from "next/image";
 
@@ -15,8 +15,8 @@ const Datepicker = () => {
       className="rounded-lg bg-[#40477B] text-white pl-4 text-2xl w-40 focus:outline-none"
       dateFormat="dd/MM/yyyy"
       selected={startDate}
-      onChange={(date) => setStartDate(date)}
-      onSelect={console.log(startDate)}
+      onChange={(date: SetStateAction<Date>) => setStartDate(date)}
+      // onSelect={console.log(startDate)}
     />
   );
 };

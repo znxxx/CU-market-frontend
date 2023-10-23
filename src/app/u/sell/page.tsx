@@ -2,6 +2,11 @@ import Navbar from "../../../../components/Navbar";
 import Image from "next/image";
 import DatePicker from "../../../../components/date";
 function sellItem() {
+  const date = new Date();
+  const currentTime = {
+    hr: date.getHours(),
+    min: date.getMinutes()
+  }
   return (
     <main className="bg-[#353966] flex flex-col">
       <header className="borde self-stretch flex w-full flex-col pt-4 border-solid border-black max-md:max-w-full">
@@ -112,11 +117,11 @@ function sellItem() {
                 Expiration time
               </div>
               <div className="flex max-w-full items-start gap-3 ml-5 max-md:justify-center">
-                <input type="number" className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]" />
+                <input type="number" defaultValue={currentTime.hr} className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]" />
                 <div className="text-neutral-300 text-xl font-medium self-center my-auto">
                   :
                 </div>
-                <input type="number" className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]" />
+                <input type="number" defaultValue={currentTime.min} className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]" />
 
 
                 {/* <div className="text-neutral-300 text-xl font-medium self-center my-auto">
