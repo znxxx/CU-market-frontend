@@ -1,8 +1,8 @@
 "use client";
-import { ProductBox } from "../../components/ProductBox";
-import Navbar from "../../components/Navbar";
+import { ProductBox } from "../../../components/ProductBox";
+import Navbar from "../../../components/Navbar";
 import Image from "next/image";
-import Slider from "../../components/slider";
+import Slider from "../../../components/slider";
 
 function Home(props: any) {
   return (
