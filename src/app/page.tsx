@@ -11,7 +11,7 @@ function StartPage() {
           <p>{session.user.studentId}</p>
           <button onClick={() => signOut()}>Sign Out</button>
         </>
-      ) : (
+      ) : (  
         <button
           onClick={() => signIn()}
           className="rounded-full bg-[#464C88] p-10 hover:drop-shadow-xl hover:bg-[#767BB8] hover:scale-110 transition-all"
@@ -29,3 +29,4 @@ function StartPage() {
   );
 }
 export default StartPage;
+

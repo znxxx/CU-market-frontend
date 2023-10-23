@@ -120,7 +120,7 @@ function Register() {
           type="text"
           id="student-id"
           name="studentId"
-          value={data.studentId !== 0 ? data.studentId : ''}
+          value={data.studentId}
           onChange={handleInputChange}
           className="text-neutral-300 text-xl font-medium self-stretch shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] mt-2.5 pt-5 pb-5 px-5 rounded-[50px] max-md:max-w-full max-md:pl-2"
         />
