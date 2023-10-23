@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 function Register() {
   interface FormValues {
-    studentId?: any;
+    studentId?: string;
     firstName?: string;
     lastName?: string;
     email?: string;
@@ -14,7 +14,7 @@ function Register() {
   }
   const router = useRouter();
   const defaultdata = {
-    studentId: 0,
+    studentId: "",
     email: "",
     firstName: "",
     lastName: "",
@@ -29,13 +29,12 @@ function Register() {
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
-    const parsedValue =
-      name === "studentId" ? (value ? parseInt(value, 10) : 0) : value;
+
     setData({
       ...data,
-      [name]: parsedValue,
+      [name]: value,
     });
-    setFormErrors(validate({ ...data, [name]: parsedValue }));
+    setFormErrors(validate({ ...data, [name]: value }));
   };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
@@ -121,7 +120,7 @@ function Register() {
           type="text"
           id="student-id"
           name="studentId"
-          value={data.studentId !== 0 ? data.studentId : ""}
+          value={data.studentId !== 0 ? data.studentId : ''}
           onChange={handleInputChange}
           className="text-neutral-300 text-xl font-medium self-stretch shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] mt-2.5 pt-5 pb-5 px-5 rounded-[50px] max-md:max-w-full max-md:pl-2"
         />
