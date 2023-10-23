@@ -8,10 +8,10 @@ function Navbar() {
   };
   return (
     <>
-      <nav className="flex w-full items-start justify-between gap-5 px-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-        <div className="self-stretch flex flex-col items-center">
-          <div className="relative mt-5 ml-5">
-            <div className="rounded-full bg-[#FF8BBC] w-[77px] h-[77px] flex items-center justify-center shadow-black shadow-inner">
+      <nav className="flex w-full items-start justify-between gap-5 px-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center bg-[#353966] py-2">
+        <div className="self-stretch flex flex-col items-center bg-[#353966]">
+          <div className="relative mt-5 ml-5 bg-[#353966]">
+            <div className="rounded-full bg-[#FF8BBC] w-[77px] h-[77px] flex items-center justify-center shadow-black shadow-inner ">
               <Image
                 src="/images/icons/Light-bulb.svg"
                 alt="logo"
@@ -26,7 +26,7 @@ function Navbar() {
           </div>
         </div>
         <button onClick={() => linkPage("/u")}>
-          <div className="self-center flex flex-col my-auto mt-[10px]">
+          <div className="self-center flex flex-col my-auto mt-[5px]">
             <Image
               src="/images/Cu-blackmarket-logo.svg"
               alt="logo"
@@ -47,7 +47,7 @@ function Navbar() {
           />
         </div>
       </nav>
-      <nav className="self-stretch flex w-full flex-col mt-4 px-5 py-3.5 max-md:max-w-full gradient-bg">
+      <nav className="self-stretch flex w-full flex-col px-5 py-3 max-md:max-w-full gradient-bg bg-[#353966]">
         <div className="flex w-[366px] max-w-full items-start justify-between gap-5 ml-3 max-md:justify-center max-md:ml-2.5">
           <a
             href="/"

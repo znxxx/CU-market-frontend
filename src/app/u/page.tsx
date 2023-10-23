@@ -8,7 +8,7 @@ function Home(props: any) {
   return (
     <main className="bg-[#353966] min-h-screen">
       <header className="bg-[#40477B] self-stretch flex w-full flex-col max-md:max-w-full">
-        <Navbar />
+        {/* <Navbar /> */}
       </header>
       <section className="">
         <div>
