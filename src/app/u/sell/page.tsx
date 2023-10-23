@@ -11,7 +11,7 @@ function sellItem() {
         <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
           <div className="flex flex-col items-stretch max-md:w-full max-md:ml-0">
             <div className="flex grow flex-col mt-1.5 max-md:max-w-full max-md:mt-10">
-              <div className="shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)] bg-slate-600 flex w-[703px] max-w-full flex-col pt-48 pb-48 rounded-3xl">
+              <div className="shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)] bg-[#40477B] flex w-[703px] max-w-full flex-col pt-48 pb-48 rounded-3xl">
                 <div className="self-center flex flex-col" />
                 <div className="text-stone-100 text-xl font-medium self-center justify-center max-md:mb-2.5 items-center">
                   <div className="">
