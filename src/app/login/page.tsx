@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import React, { useRef } from "react";
-import { signIn } from "next-auth/react";
+import React from "react";
 import { cookies } from "next/headers";
 import { getCsrfToken } from "next-auth/react";
 

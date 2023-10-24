@@ -1,32 +1,17 @@
 "use client";
-import { signIn, signOut, useSession } from "next-auth/react";
-import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 function StartPage() {
-  const { data: session } = useSession();
-  return (
-    <div className="bg-[#353966] min-h-screen flex justify-center place-items-center">
-      {session?.user ? (
-        <>
-          <p>{session.user.studentId}</p>
-          <button onClick={() => signOut()}>Sign Out</button>
-        </>
-      ) : (  
-        <button
-          onClick={() => signIn()}
-          className="rounded-full bg-[#464C88] p-10 hover:drop-shadow-xl hover:bg-[#767BB8] hover:scale-110 transition-all"
-        >
-          <Image
-            src="/images/Cu-blackmarket-logo.svg"
-            alt="logo"
-            className="self-center"
-            width={195}
-            height={115}
-          />
-        </button>
-      )}
-    </div>
-  );
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  useEffect(() => {
+    if (status !== "loading" && !session?.user) router.replace("/login");
+  }, [router, session?.user, status]);
+  if (!session?.user) return null;
+
+  router.push("/u");
+  return null;
 }
 export default StartPage;
-

@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const handler = NextAuth({
@@ -30,7 +30,7 @@ const handler = NextAuth({
         const user = await res.json();
 
         if (res.ok && user) {
-          return user;
+          return { ...user, studentId } as User;
         } else return null;
       },
     }),
@@ -45,12 +45,21 @@ const handler = NextAuth({
   },
 
   callbacks: {
-    async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
+    async session({ session, token, user }) {
+      // Send properties to the client, like an access_token and user id from a provider.
+
+      session.user.access_token = token.access_token as string;
+      session.user.studentId = token.studentId as string;
+
+      return session;
+    },
+    jwt: async ({ token, user }) => {
+      if (user) {
+        token.access_token = user.access_token;
+        token.studentId = user.studentId;
+      }
+
+      return token;
     },
   },
 });
