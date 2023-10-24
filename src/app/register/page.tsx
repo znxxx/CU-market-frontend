@@ -2,6 +2,8 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+// import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 function Register() {
   interface FormValues {
@@ -53,9 +55,30 @@ function Register() {
         .then((res) => {
           console.log("res", res);
         })
-        .then(() => linkPage("/"))
+        .then(() =>
+          Swal.fire({
+            title: "Register Complete",
+            text: "You will direct to homepage in 3 seconds.",
+            icon: "success",
+            background: "#40477B",
+            color: "#F5F1F0",
+            iconColor: "#FF8BBC",
+            showConfirmButton: false,
+            timer: 3000,
+          })
+        )
+        .then(() => linkPage("/login"))
         .catch((err) => {
           console.error("err", err);
+          Swal.fire({
+            title: "Register error",
+            text: "Please try registering again",
+            icon: "error",
+            background: "#40477B",
+            color: "#F5F1F0",
+            iconColor: "#FF8BBC",
+            confirmButtonColor:"#FF8BBC",
+          })
         });
     }
   };
@@ -98,6 +121,18 @@ function Register() {
     }
     return errors;
   };
+  // useEffect(() => {
+  //   Swal.fire({
+  //     title: "Register Complete",
+  //     text: "You will direct to login page in 2 seconds.",
+  //     icon: "success",
+  //     background: "#40477B",
+  //     color: "#F5F1F0",
+  //     iconColor: "#FF8BBC",
+  //     showConfirmButton: false,
+  //     timer: 2000,
+  //   });
+  // }, []);
 
   return (
     <section className="bg-[#353966] flex flex-col px-5">

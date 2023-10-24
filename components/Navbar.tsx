@@ -42,7 +42,7 @@ function Navbar() {
           </div>
         </button>
 
-        <div className="self-center flex w-[77px] h-[77px] flex-col my-auto mr-4">
+        <div className="self-center flex w-[77px] h-[77px] flex-col -mt-5 mr-4">
           <Image
             src="/images/icons/CU Black Market icon.svg"
             alt="profile-logo"
