@@ -3,8 +3,11 @@ import { ProductBox } from "../../../components/ProductBox";
 import Navbar from "../../../components/Navbar";
 import Image from "next/image";
 import Slider from "../../../components/slider";
+// import { usePathname } from "next/navigation";
 
 function Home(props: any) {
+
+
   return (
     <main className="bg-[#353966] min-h-screen">
       <header className="bg-[#40477B] self-stretch flex w-full flex-col max-md:max-w-full">
