@@ -20,7 +20,7 @@ function Navbar() {
                 height={60}
               />
             </div>
-            <div className="text-stone-100 text-center text-xl font-medium mt-3">
+            <div className="text-stone-100 text-center text-xl font-medium mt-3 mb-3">
               10,000
             </div>
           </div>
@@ -50,7 +50,7 @@ function Navbar() {
       <nav className="self-stretch flex w-full flex-col px-5 py-3 max-md:max-w-full gradient-bg bg-[#353966]">
         <div className="flex w-[366px] max-w-full items-start justify-between gap-5 ml-3 max-md:justify-center max-md:ml-2.5">
           <a
-            href="/"
+            href="/u"
             className="text-stone-100 text-center text-2xl font-medium self-center my-auto"
           >
             HOME

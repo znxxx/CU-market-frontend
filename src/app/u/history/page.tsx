@@ -3,7 +3,7 @@ function History() {
   return (
     <>
       <div className="flex flex-col bg-[#353966] h-full">
-        <div className="flex flex-row gap-5 mx-8 m-4 text-stone-100 font-normal text-2xl">
+        <div className="flex flex-row gap-5 mx-8 m-5 text-stone-100 font-normal text-2xl">
           In Progress
         </div>
         <div className="flex flex-col mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B]">
