@@ -6,7 +6,7 @@ function History() {
         <div className="flex flex-row gap-5 mx-8 m-4 text-stone-100 font-normal text-2xl">
           In Progress
         </div>
-        <div className="flex flex-col bg-[#40477B] mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20)_inset,8px_8px_20px_0px_rgba(126,130,176,0.25)_inset] ">
+        <div className="flex flex-col mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B]">
           <div className="flex flex-row gap-6">
             <div className="flex flex-col">
               <div className="rounded-md">
@@ -48,7 +48,7 @@ function History() {
           Finished
         </div>
         <div className="flex flex-col gap-3">
-        <div className="flex flex-col bg-[#40477B] mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20)_inset,8px_8px_20px_0px_rgba(126,130,176,0.25)_inset]">
+        <div className="flex flex-col mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B]">
           <div className="flex flex-row gap-6">
             <div className="flex flex-col">
               <div className="rounded-md">
@@ -99,7 +99,7 @@ function History() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col bg-[#40477B] mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20)_inset,8px_8px_20px_0px_rgba(126,130,176,0.25)_inset] ">
+        <div className="flex flex-col mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B]">
           <div className="flex flex-row gap-6">
             <div className="flex flex-col">
               <div className="rounded-md">
