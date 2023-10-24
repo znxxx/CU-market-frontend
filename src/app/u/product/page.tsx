@@ -6,7 +6,7 @@ function ProductComponent() {
   return (
     <main className="bg-[#353966] flex flex-col">
       <header className="border self-stretch flex w-full pb-0 flex-col pt-4 border-solid border-black max-md:max-w-full">
-        <Navbar />
+        {/* <Navbar /> */}
       </header>
       <section className="self-center w-full max-w-[1374px] 2xl:max-w-[1700px] mt-12 max-md:max-w-full max-md:mt-10">
         <div className="2xl:gap-40 lg:gap-16 md:gap-16 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
@@ -16,43 +16,45 @@ function ProductComponent() {
                 Product Name
               </h1>
               <div className="flex bg-white grow">
-              <Image
-                src='/images/Rectangle 22.png'
-                className="grow"
-                alt="Product Image"
-                width={750}
-                height={360}
-              />
+                <Image
+                  src="/images/Rectangle 22.png"
+                  className="grow"
+                  alt="Product Image"
+                  width={750}
+                  height={360}
+                />
               </div>
               <div className="flex flex-auto justify-center">
-              <div className="flex max-w-full items-center justify-center gap-3 mt-2 max-md:justify-center max-md:ml-1.5">
-                <div className="">
-                  <Image 
-                  src='/images/Rectangle 22.png'
-                  alt='sample'
-                  className="self-center"
-                  width={100}
-                  height={65}/>
-                </div>
-                <div className="">
-                  <Image 
-                  src='/images/Rectangle 22.png'
-                  alt='sample'
-                  className="self-center"
-                  width={100}
-                  height={65}/>
-                </div>
-                <div className="">
-                  <Image 
-                  src='/images/Rectangle 22.png'
-                  alt='sample'
-                  className="self-center"
-                  width={100}
-                  height={65}/>
+                <div className="flex max-w-full items-center justify-center gap-3 mt-2 max-md:justify-center max-md:ml-1.5">
+                  <div className="">
+                    <Image
+                      src="/images/Rectangle 22.png"
+                      alt="sample"
+                      className="self-center"
+                      width={100}
+                      height={65}
+                    />
+                  </div>
+                  <div className="">
+                    <Image
+                      src="/images/Rectangle 22.png"
+                      alt="sample"
+                      className="self-center"
+                      width={100}
+                      height={65}
+                    />
+                  </div>
+                  <div className="">
+                    <Image
+                      src="/images/Rectangle 22.png"
+                      alt="sample"
+                      className="self-center"
+                      width={100}
+                      height={65}
+                    />
+                  </div>
                 </div>
               </div>
-              </div>
-              
             </div>
           </div>
           <div className="flex flex-col items-stretch w-[56%] ml-5 max-md:w-full max-md:ml-0">
@@ -120,15 +122,15 @@ function ProductComponent() {
               className="bg-indigo-500 flex items-start justify-between gap-5 pl-7 pr-1.5 rounded-[50px] max-md:flex-wrap my-6 w-[537px] h-[58px] ml-32 2xl:ml-48 mt-6"
               aria-label="Bid Component"
             >
-            
-            <input type="text" className="justify-start grow text-neutral-300 text-xl font-medium flex-1 my-auto mx-auto bg-indigo-500 rounded-[50px] py-3 px-auto border-transparent focus:border-transparent focus:ring-0 text-center focus:outline-none" placeholder="Type in the amount" />
-              <button
-                className="text-stone-100 text-3xl font-bold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] flex-1 mt-1.5 rounded-[50px] h-[47px]"
-              >
+              <input
+                type="text"
+                className="justify-start grow text-neutral-300 text-xl font-medium flex-1 my-auto mx-auto bg-indigo-500 rounded-[50px] py-3 px-auto border-transparent focus:border-transparent focus:ring-0 text-center focus:outline-none"
+                placeholder="Type in the amount"
+              />
+              <button className="text-stone-100 text-3xl font-bold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] flex-1 mt-1.5 rounded-[50px] h-[47px]">
                 BIDDING
               </button>
             </section>
-            
           </div>
         </div>
       </section>
@@ -153,28 +155,30 @@ function ProductComponent() {
               <div className="self-center flex items-start gap-1 my-auto">
                 <div className="self-stretch flex w-[19px] h-[19px] flex-col" />
                 <div className="text-stone-100 text-base font-bold self-center ml-5 my-auto pl-48 flex flex-row">
-                    <div>
-                        <Image 
-                        src='/images/icons/bids-icon.svg'
-                        alt="bidder-icon"
-                        className="mx-1.5"
-                        width={19}
-                        height={19}/>
-                    </div>
+                  <div>
+                    <Image
+                      src="/images/icons/bids-icon.svg"
+                      alt="bidder-icon"
+                      className="mx-1.5"
+                      width={19}
+                      height={19}
+                    />
+                  </div>
                   20 Bids
                 </div>
               </div>
               <div className="self-center flex items-start gap-0.5 my-auto">
                 <div className="self-stretch flex w-[19px] h-[19px] flex-col" />
                 <div className="text-stone-100 text-base font-bold self-center -ml-px mr-5 my-auto flex flex-row">
-                <div>
-                        <Image 
-                        src='/images/icons/bidder-icon.svg'
-                        alt="bidder-icon"
-                        className="mx-1.5"
-                        width={19}
-                        height={19}/>
-                    </div>
+                  <div>
+                    <Image
+                      src="/images/icons/bidder-icon.svg"
+                      alt="bidder-icon"
+                      className="mx-1.5"
+                      width={19}
+                      height={19}
+                    />
+                  </div>
                   5 Bidders
                 </div>
               </div>
