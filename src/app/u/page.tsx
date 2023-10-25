@@ -131,6 +131,7 @@ function Home(props: any) {
                 </div>
               </div>
             </div>
+            
 
             <div className="bg-[#40477B] p-3 flex flex-col rounded-[20px] shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset]">
               <div>

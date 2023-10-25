@@ -23,10 +23,10 @@ function Register() {
     password: "",
     confirmpassword: "",
   };
-  const linkPage = (page: string) => {
-    router.push(page);
-  };
-  const [data, setData] = useState(defaultdata);
+    const linkPage = (page: string) => {
+      router.push(page);
+    };
+  const [data, setData] = useState(defaultdata);  
   const [formErrors, setFormErrors] = useState<FormValues>({});
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
