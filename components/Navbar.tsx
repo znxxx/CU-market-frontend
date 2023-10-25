@@ -1,11 +1,16 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+
 function Navbar() {
   const router = useRouter();
   const linkPage = (page: string) => {
     router.push(page);
   };
+  const pathname = usePathname();
+  // console.log(pathname);
+
   return (
     <>
       <nav className="flex w-full items-start justify-between gap-5 px-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center bg-[#353966] py-2">
@@ -20,7 +25,7 @@ function Navbar() {
                 height={60}
               />
             </div>
-            <div className="text-stone-100 text-center text-xl font-medium mt-3">
+            <div className="text-stone-100 text-center text-xl font-medium mt-3 mb-3">
               10,000
             </div>
           </div>
@@ -37,7 +42,7 @@ function Navbar() {
           </div>
         </button>
 
-        <div className="self-center flex w-[77px] h-[77px] flex-col my-auto mr-4">
+        <div className="self-center flex w-[77px] h-[77px] flex-col -mt-5 mr-4">
           <Image
             src="/images/icons/CU Black Market icon.svg"
             alt="profile-logo"
@@ -48,26 +53,40 @@ function Navbar() {
         </div>
       </nav>
       <nav className="self-stretch flex w-full flex-col px-5 py-3 max-md:max-w-full gradient-bg bg-[#353966]">
-        <div className="flex w-[366px] max-w-full items-start justify-between gap-5 ml-3 max-md:justify-center max-md:ml-2.5">
+        <div className="flex w-[700px] max-w-full items-start justify-between gap-5 ml-3 max-md:justify-center max-md:ml-2.5">
           <a
-            href="/"
-            className="text-stone-100 text-center text-2xl font-medium self-center my-auto"
+            href="/u"
+            className={`text-${pathname == '/u' ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
           >
             HOME
           </a>
           <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
           <a
-            href="/u/productlist"
-            className="text-stone-100 text-center text-2xl font-medium self-center my-auto"
+            href="/u/product"
+            className={`text-${pathname.startsWith('/u/product') ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
           >
-            BIDDING
+            MARKET
           </a>
           <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
           <a
-            href="/u/sell"
-            className="text-stone-100 text-center text-2xl font-medium self-center my-auto"
+            href="/u/create-product"
+            className={`text-${pathname == '/u/create-product' ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
           >
             SELLING
+          </a>
+          <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
+          <a
+            href="/u/history/bid"
+            className={`text-${pathname == '/u/history/bid' ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
+          >
+            MY BID
+          </a>
+          <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
+          <a
+            href="/u/history/sell"
+            className={`text-${pathname == '/u/history/sell' ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
+          >
+            MY SELL
           </a>
         </div>
       </nav>

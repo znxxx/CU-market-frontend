@@ -7,6 +7,19 @@ function sellItem() {
     hr: date.getHours(),
     min: date.getMinutes()
   }
+  const defaultdata = {
+    studentId: "",
+    productName: "",
+    description: "",
+    startPrice: 0,
+    available: false,
+    expiryLength:0,
+    image: [
+      "imageUrl",
+      "imageKey"
+    ]
+  };
+
   return (
     <main className="bg-[#353966] flex flex-col">
       <header className="borde self-stretch flex w-full flex-col pt-4 border-solid border-black max-md:max-w-full">

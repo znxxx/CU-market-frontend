@@ -1,6 +1,8 @@
 "use client";
+import { ProductBox } from "../../../../components/ProductBox";
+import Navbar from "../../../../components/Navbar";
 import Image from "next/image";
-import Slider from "../../../components/slider";
+import Slider from "../../../../components/slider";
 // import { usePathname } from "next/navigation";
 
 function Home(props: any) {
@@ -9,7 +11,7 @@ function Home(props: any) {
       <div>
         <Slider />
       </div>
-      <div className="flex flex-row mt-5 max-h-screen 2xl:gap-36 lg:gap-12 pb-5">
+      <div className="flex flex-row my-5 max-h-screen 2xl:gap-36 lg:gap-12 mb-32">
         <div className="flex flex-col justify-start gap-7">
           <div className="flex flex-col bg-[#FF8BBC] w-[431px] h-[55px] text-center mx-[51px] rounded-[20px] text-2xl py-3 text-stone-100 font-extrabold shadow-[8px_8px_12px_0px_rgba(32,41,143,0.25),8px_8px_20px_0px_rgba(69,13,37,0.20)_inset]">
             <div className="flex flex-row justify-center">
@@ -28,7 +30,7 @@ function Home(props: any) {
 
           <div className="flex flex-row mx-[30px] gap-14">
             <div className="bg-[#40477B] p-3 flex flex-col rounded-[20px] shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset]">
-              <div className="">
+              <div>
                 <Image
                   alt="Sample img"
                   className="aspect-auto object-cover object-center w-full overflow-hidden self-stretch rounded-xl"
