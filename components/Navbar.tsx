@@ -56,35 +56,45 @@ function Navbar() {
         <div className="flex w-[700px] max-w-full items-start justify-between gap-5 ml-3 max-md:justify-center max-md:ml-2.5">
           <a
             href="/u"
-            className={`text-${pathname == '/u' ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
+            className={`text-${
+              pathname == "/u" ? `[#353966]` : `stone-100`
+            } text-center text-2xl font-medium self-center my-auto`}
           >
             HOME
           </a>
           <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
           <a
-            href="/u/product"
-            className={`text-${pathname.startsWith('/u/product') ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
+            href="/u/productlist"
+            className={`text-${
+              pathname.startsWith("/u/product") ? `[#353966]` : `stone-100`
+            } text-center text-2xl font-medium self-center my-auto`}
           >
             MARKET
           </a>
           <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
           <a
             href="/u/create-product"
-            className={`text-${pathname == '/u/create-product' ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
+            className={`text-${
+              pathname == "/u/create-product" ? `[#353966]` : `stone-100`
+            } text-center text-2xl font-medium self-center my-auto`}
           >
             SELLING
           </a>
           <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
           <a
             href="/u/history/bid"
-            className={`text-${pathname == '/u/history/bid' ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
+            className={`text-${
+              pathname == "/u/history/bid" ? `[#353966]` : `stone-100`
+            } text-center text-2xl font-medium self-center my-auto`}
           >
             MY BID
           </a>
           <div className="bg-stone-100 self-stretch w-[3px] h-[35px]" />
           <a
             href="/u/history/sell"
-            className={`text-${pathname == '/u/history/sell' ? `[#353966]`:`stone-100`} text-center text-2xl font-medium self-center my-auto`}
+            className={`text-${
+              pathname == "/u/history/sell" ? `[#353966]` : `stone-100`
+            } text-center text-2xl font-medium self-center my-auto`}
           >
             MY SELL
           </a>

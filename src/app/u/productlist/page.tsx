@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDebounce } from "@uidotdev/usehooks";
 
 import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
@@ -20,12 +21,15 @@ function useFetch(query, page) {
     async (query: any) => {
       if (status === "loading") return;
       try {
-        await setLoading(true);
-        await setError(false);
-        const res = await axios.get("http://localhost:4000/product/available", {
-          headers: { Authorization: `Bearer ${access_token}` },
-        });
-        await setList((prev) => [...prev, ...res.data]);
+        setLoading(true);
+        setError(false);
+        const res = await axios.get(
+          `http://localhost:4000/product/search?searchField=${query}`,
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+        setList([...res.data]);
         setLoading(false);
       } catch (err) {
         setError(err);
@@ -46,6 +50,7 @@ function ProductList(props: any) {
   const [page, setPage] = useState(1);
   const { loading, error, list } = useFetch(query, page);
   const loader = useRef(null);
+  const debouncedInputTerm = useDebounce(query, 500);
 
   const handleChange = (e) => {
     setQuery(e.target.value);
@@ -54,7 +59,8 @@ function ProductList(props: any) {
   const handleObserver = useCallback((entries) => {
     const lastProduct = entries[0];
     if (!lastProduct.isIntersecting) {
-      setPage((prev) => prev + 1);
+      console.log("running");
+      // setPage((prev) => prev + 1);
     }
   }, []);
 
@@ -68,7 +74,10 @@ function ProductList(props: any) {
     };
     const observer = new IntersectionObserver(handleObserver, option);
     if (loader.current) observer.observe(loader.current);
-  }, [handleObserver]);
+    return () => {
+      if (loader.current) observer.unobserve(loader.current);
+    };
+  }, [debouncedInputTerm]);
 
   return (
     <main className="bg-[#353966] min-h-screen">
@@ -98,7 +107,7 @@ function ProductList(props: any) {
         </div>
         {loading && <p>Loading...</p>}
         {error && <p>Error!</p>}
-        <div ref={loader} />
+
         <div ref={loader} />
       </div>
     </main>
