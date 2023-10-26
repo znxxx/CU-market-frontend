@@ -37,23 +37,6 @@ function sellItem() {
     image: null,
   };
   const [meta, setMeta] = useState(defaultdata);
-  // setMeta({
-  //   ...meta,
-  //   image: ['eiei']
-  // }
-  // )
-  // console.log(meta);
-
-  // const preImg: File[] = [];
-
-  // const handleImageUpload = (event) => {
-  //   const file = event.target.files[0];
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(file);
-  //   preImg.push(file)
-  //   console.log(preImg);
-
-  // };
   const [preImg, setPreImg] = useState([]);
 
   const handleImageUpload = (event) => {
@@ -66,12 +49,16 @@ function sellItem() {
       updatedPreImg.push({ file, name: file.name, key: key });
       setPreImg(updatedPreImg);
       reader.readAsDataURL(file);
+      console.log(updatedPreImg);
+      
     }
   };
-  // console.log(preImg);
 
   const handleInputChange = (e: { target: { id: any; value: any } }) => {
-    const { id, value } = e.target;
+    let { id, value } = e.target;
+    if (id === 'startPrice' || id === 'quantity') {
+      value = Number(value)
+    }
     setMeta({
       ...meta,
       [id]: value,
@@ -140,14 +127,9 @@ function sellItem() {
                 imageKey,
               });
             } else {
-              // Handle the case when the fetch request is not successful
               console.error("Image upload failed");
             }
           }
-          // setMeta({
-          //   ...meta,
-          //   image: imageMetaData,
-          // });
 
           const updatedMeta = {
             ...meta,
@@ -172,12 +154,21 @@ function sellItem() {
               color: "#F5F1F0",
               iconColor: "#FF8BBC",
               showConfirmButton: false,
-              timer: 3000,
+              timer: 5000,
             });
+            linkPage('/u/history/sell')
             console.log(response.json());
             
           } else {
-            
+            await Swal.fire({
+              title: "Create Failed, please try again",
+              icon: "error",
+              background: "#40477B",
+              color: "#F5F1F0",
+              iconColor: "#FF8BBC",
+              showConfirmButton: false,
+              timer: 5000,
+            });
           }
         } catch (error) {
           console.error(error);
@@ -186,15 +177,15 @@ function sellItem() {
     });
   }
 
-  useEffect(() => {
-    console.log(meta);
-  }, [meta]);
+  // useEffect(() => {
+  //   console.log(meta);
+  // }, [meta]);
 
   return (
     <main className="bg-[#353966] flex flex-col">
       <header className="borde self-stretch flex w-full flex-col pt-4 border-solid border-black max-md:max-w-full"></header>
       <section className="self-center w-full max-w-[1336px] mt-10 px-5 max-md:max-w-full max-md:mt-10">
-        <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
+        <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0 2xl:gap-7">
           <div className="flex flex-col items-stretch max-md:w-full max-md:ml-0">
             <div className="flex grow flex-col mt-1.5 max-md:max-w-full max-md:mt-10">
               <div className="relative">
@@ -238,7 +229,9 @@ function sellItem() {
                       key={index}
                       className="text-stone-300 text-xl font-medium underline"
                     >
+                      <a href={item.file ? URL.createObjectURL(item.file) : ''} target="_blank" rel="noopener noreferrer">
                       {item.name}
+                      </a>
                     </div>
                   ))}
                 </div>
@@ -281,6 +274,17 @@ function sellItem() {
                   onChange={(e) => handleInputChange(e)}
                 />
               </div>
+              <div className="text-stone-100 text-xl font-medium ml-7 max-md:ml-2.5 mt-3">
+                Quantity
+              </div>
+              <div className="text-neutral-300 text-xl font-medium shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] w-[200px] max-w-full mt-2.5 pt-6 pb-5 rounded-[50px] max-md:pl-2 flex">
+                <input
+                  type="number"
+                  id="quantity"
+                  className="focus:outline-none bg-[#40477B] w-[200px] px-5 rounded-xl text-center"
+                  onChange={(e) => handleInputChange(e)}
+                />
+              </div>
               <div className="text-stone-100 text-xl font-medium ml-7 mt-5 max-md:ml-2.5">
                 Your bid starts at
               </div>
@@ -296,9 +300,9 @@ function sellItem() {
                 </div>
                 <div className="bg-[#40477B] mt-3 max-md:pl-2 w-32 flex flex-col py-2 rounded-[50px] text-xl font-medium shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)]">
                   <input
-                    type="text"
+                    type="number"
                     id="startPrice"
-                    className="focus:outline-none text-3xl flex-grow min-h-[50px] bg-[#40477B] rounded-[50px] text-stone-100 text-center px-2"
+                    className="focus:outline-none text-2xl flex-grow min-h-[50px] bg-[#40477B] rounded-[50px] text-stone-100 text-center px-2"
                     onChange={(e) => handleInputChange(e)}
                   />
                 </div>
