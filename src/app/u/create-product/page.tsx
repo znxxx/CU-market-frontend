@@ -4,8 +4,13 @@ import Image from "next/image";
 import DatePicker from "../../../../components/date";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import BlockUI from "../../../../components/block";
+import Swal from "sweetalert2";
 
 function sellItem() {
+  const [block, setBlock] = useState(false);
+  const testToken =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJzdHVkZW50SWQiOiIwMDAwIiwiaWF0IjoxNjk4MzA2MDgzLCJleHAiOjE3MDYwODIwODN9.aYPClY_cj9cDGTPmuh4aXq1y42GgzIWd1JQBNtstLlo";
   const date = new Date();
   const [startDate, setStartDate] = useState(null);
 
@@ -20,28 +25,50 @@ function sellItem() {
   };
 
   const defaultdata = {
-    studentId: "",
+    studentId: "0000",
     productName: "",
     description: "",
     quantity: 0,
-    startPrice: 0,
+    startPrice: 1000,
     endPrice: 0,
     available: false,
     expiryTime: startDate,
     address: "",
-    image: ["imageUrl", "imageKey"],
+    image: null,
   };
   const [meta, setMeta] = useState(defaultdata);
+  // setMeta({
+  //   ...meta,
+  //   image: ['eiei']
+  // }
+  // )
+  // console.log(meta);
 
-  const [preImg, setPreImg] = useState({})
+  // const preImg: File[] = [];
+
+  // const handleImageUpload = (event) => {
+  //   const file = event.target.files[0];
+  //   const reader = new FileReader();
+  //   reader.readAsDataURL(file);
+  //   preImg.push(file)
+  //   console.log(preImg);
+
+  // };
+  const [preImg, setPreImg] = useState([]);
+
   const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    // setPreImg(file)
-    console.log(file);
-    
+    const files = event.target.files;
+    const updatedPreImg = [...preImg];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      const key = i;
+      updatedPreImg.push({ file, name: file.name, key: key });
+      setPreImg(updatedPreImg);
+      reader.readAsDataURL(file);
+    }
   };
+  // console.log(preImg);
 
   const handleInputChange = (e: { target: { id: any; value: any } }) => {
     const { id, value } = e.target;
@@ -74,22 +101,94 @@ function sellItem() {
     });
   }, [startDate, time]);
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    // fetch("http://localhost:4000/product/add/", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(meta),
-    // })
-    //   .then((res) => res.json())
-    //   .then((res) => {
-    //     console.log("res", res);
-    //   })
-    //   .then(() => linkPage("/login"))
-    //   .catch((err) => {
-    //     console.error("err", err);
-    //   });
+  async function handleSubmit() {
+    const imageMetaData: { imageUrl: any; imageKey: any }[] = [];
+    await Swal.fire({
+      title: "Confirm?",
+      text: "Please carefully check your product details. After you confirm this, you will have 60 seconds to delete.",
+      color: "#F5F1F0",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: "No",
+      background: "#40477B",
+      customClass: {
+        confirmButton: "popup-btn-yes",
+        color: "#F5F1F0",
+        text: "popup-title",
+        title: "popup-title",
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setBlock(true);
+          for (const image of preImg) {
+            const formData = new FormData();
+            formData.append("file", image.file);
+            const res = await fetch("http://localhost:4000/aws/upload-image", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJzdHVkZW50SWQiOiIwMDAwIiwiaWF0IjoxNjk4MzQ0Mjg0LCJleHAiOjE3MDYxMjAyODR9.7b_4d3S0xeB35J04OyOPNFsT2rpa8oSamA_ZQ9ZvOrE`,
+              },
+              body: formData,
+            });
+            if (res.ok) {
+              const responseJson = await res.json();
+              const imageUrl = responseJson.url;
+              const imageKey = responseJson.key;
+              imageMetaData.push({
+                imageUrl,
+                imageKey,
+              });
+            } else {
+              // Handle the case when the fetch request is not successful
+              console.error("Image upload failed");
+            }
+          }
+          // setMeta({
+          //   ...meta,
+          //   image: imageMetaData,
+          // });
+
+          const updatedMeta = {
+            ...meta,
+            image: imageMetaData,
+          };
+          console.log(JSON.stringify(updatedMeta));
+          
+          const response = await fetch("http://localhost:4000/product/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJzdHVkZW50SWQiOiIwMDAwIiwiaWF0IjoxNjk4MzQ0Mjg0LCJleHAiOjE3MDYxMjAyODR9.7b_4d3S0xeB35J04OyOPNFsT2rpa8oSamA_ZQ9ZvOrE`,
+            },
+            body: JSON.stringify(updatedMeta),
+          });
+          if (response.ok) {            
+            setBlock(false);
+            await Swal.fire({
+              title: "Create Complete",
+              icon: "success",
+              background: "#40477B",
+              color: "#F5F1F0",
+              iconColor: "#FF8BBC",
+              showConfirmButton: false,
+              timer: 3000,
+            });
+            console.log(response.json());
+            
+          } else {
+            
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    });
+  }
+
+  useEffect(() => {
     console.log(meta);
-  };
+  }, [meta]);
 
   return (
     <main className="bg-[#353966] flex flex-col">
@@ -103,6 +202,7 @@ function sellItem() {
                   <input
                     type="file"
                     className="hidden"
+                    multiple
                     onChange={(e) => handleImageUpload(e)}
                   />
                   <div className="shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)] bg-[#40477B] flex w-[703px] max-w-full flex-col pt-48 pb-48 rounded-3xl">
@@ -125,19 +225,22 @@ function sellItem() {
               </div>
 
               <div className="mt-3">
-                <div className="text-stone-300 text-xl font-medium mt-1">
-                  2 files have been uploaded
+                <div
+                  className={`text-stone-300 text-xl font-medium mt-1 ${
+                    preImg.length > 0 ? "" : "hidden"
+                  }`}
+                >
+                  {preImg.length} files have been uploaded
                 </div>
                 <div className="mt-4">
-                  <div className="text-stone-300 text-xl font-medium underline">
-                    oat.JPG1
-                  </div>
-                  <div className="text-stone-300 text-xl font-medium underline">
-                    guy.JPG2
-                  </div>
-                  <div className="text-stone-300 text-xl font-medium underline">
-                    Mash.JPG3
-                  </div>
+                  {preImg.map((item, index) => (
+                    <div
+                      key={index}
+                      className="text-stone-300 text-xl font-medium underline"
+                    >
+                      {item.name}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -231,6 +334,7 @@ function sellItem() {
                   id="hr"
                   type="number"
                   defaultValue={currentTime.hr}
+                  min="0" max="23"
                   className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]"
                   onChange={(e) => handleTime(e)}
                 />
@@ -241,6 +345,7 @@ function sellItem() {
                   id="min"
                   type="number"
                   defaultValue={currentTime.min}
+                  min="0" max="60"
                   className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]"
                   onChange={(e) => handleTime(e)}
                 />
@@ -264,6 +369,7 @@ function sellItem() {
           </span>
         </button>
       </footer>
+      <BlockUI block={block} setBlock={setBlock} />
     </main>
   );
 }

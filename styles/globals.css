@@ -59,6 +59,31 @@ body {
   object-fit: cover;
 }
 
+.popup-title {
+  color: #F5F1F0;
+  text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.20);
+  font-family: 'MavenPro', sans-serif;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.popup-body {
+  color: red;
+  text-align: center;
+  font-family: 'MavenPro', sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.popup-btn-yes {
+  border-radius: 50px;
+  background: #40A9FD;
+  box-shadow: 6px 10px 30px 0px rgba(45, 124, 188, 0.42) inset, 3px 4px 7px 0px rgba(0, 0, 0, 0.20) inset;
+}
+
 
 
 /* :root {
