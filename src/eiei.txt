@@ -1,0 +1,26 @@
+await Swal.fire({
+        title: "Confirm?",
+        text: "Please carefully check your product details. After you confirm this, you will have 60 seconds to delete.",
+        color: "#F5F1F0",
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: "No",
+        background: "#40477B",
+        customClass: {
+          confirmButton: "popup-btn-yes",
+          color: "#F5F1F0",
+          text: "popup-title",
+          title: "popup-title",
+        },
+      });
+
+ await Swal.fire({
+        title: "Create Complete",
+        icon: "success",
+        background: "#40477B",
+        color: "#F5F1F0",
+        iconColor: "#FF8BBC",
+        showConfirmButton: false,
+        timer: 3000,
+      });
+  

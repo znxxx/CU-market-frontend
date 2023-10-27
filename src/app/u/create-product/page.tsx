@@ -4,8 +4,17 @@ import Image from "next/image";
 import DatePicker from "../../../../components/date";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import BlockUI from "../../../../components/block";
+import Swal from "sweetalert2";
+// import { useSession } from "next-auth/react";
+// import { getToken } from "next-auth/jwt";
 
 function sellItem() {
+  const [block, setBlock] = useState(false);
+  // const { data: session, status } = useSession();
+  // const access_token = session?.user.access_token;
+  // console.log(session);
+
   const date = new Date();
   const [startDate, setStartDate] = useState(null);
 
@@ -20,31 +29,39 @@ function sellItem() {
   };
 
   const defaultdata = {
-    studentId: "",
+    studentId: "1236",
     productName: "",
     description: "",
     quantity: 0,
-    startPrice: 0,
+    startPrice: 1000,
     endPrice: 0,
     available: false,
     expiryTime: startDate,
     address: "",
-    image: ["imageUrl", "imageKey"],
+    image: null,
   };
   const [meta, setMeta] = useState(defaultdata);
+  const [preImg, setPreImg] = useState([]);
 
-  const [preImg, setPreImg] = useState({})
   const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    // setPreImg(file)
-    console.log(file);
-    
+    const files = event.target.files;
+    const updatedPreImg = [...preImg];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+      const key = i;
+      updatedPreImg.push({ file, name: file.name, key: key });
+      setPreImg(updatedPreImg);
+      reader.readAsDataURL(file);
+      console.log(updatedPreImg);
+    }
   };
 
   const handleInputChange = (e: { target: { id: any; value: any } }) => {
-    const { id, value } = e.target;
+    let { id, value } = e.target;
+    if (id === "startPrice" || id === "quantity") {
+      value = Number(value);
+    }
     setMeta({
       ...meta,
       [id]: value,
@@ -74,28 +91,104 @@ function sellItem() {
     });
   }, [startDate, time]);
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
-    // fetch("http://localhost:4000/product/add/", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(meta),
-    // })
-    //   .then((res) => res.json())
-    //   .then((res) => {
-    //     console.log("res", res);
-    //   })
-    //   .then(() => linkPage("/login"))
-    //   .catch((err) => {
-    //     console.error("err", err);
-    //   });
-    console.log(meta);
-  };
+  async function handleSubmit() {
+    const imageMetaData: { imageUrl: any; imageKey: any }[] = [];
+    await Swal.fire({
+      title: "Confirm?",
+      text: "Please carefully check your product details. After you confirm this, you will have 60 seconds to delete.",
+      color: "#F5F1F0",
+      showDenyButton: true,
+      confirmButtonText: "Yes",
+      denyButtonText: "No",
+      background: "#40477B",
+      customClass: {
+        confirmButton: "popup-btn-yes",
+        color: "#F5F1F0",
+        text: "popup-title",
+        title: "popup-title",
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setBlock(true);
+          for (const image of preImg) {
+            const formData = new FormData();
+            formData.append("file", image.file);
+            const res = await fetch("http://localhost:4000/aws/upload-image", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+              },
+              body: formData,
+            });
+            if (res.ok) {
+              const responseJson = await res.json();
+              const imageUrl = responseJson.url;
+              const imageKey = responseJson.key;
+              imageMetaData.push({
+                imageUrl,
+                imageKey,
+              });
+            } else {
+              console.error("Image upload failed");
+            }
+          }
+
+          const updatedMeta = {
+            ...meta,
+            image: imageMetaData,
+          };
+          console.log(JSON.stringify(updatedMeta));
+
+          const response = await fetch("http://localhost:4000/product/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              // Authorization: `Bearer ${access_token}`,
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+            },
+            body: JSON.stringify(updatedMeta),
+          });
+          if (response.ok) {
+            setBlock(false);
+            await Swal.fire({
+              title: "Create Complete",
+              icon: "success",
+              background: "#40477B",
+              color: "#F5F1F0",
+              iconColor: "#FF8BBC",
+              showConfirmButton: false,
+              timer: 5000,
+            });
+            linkPage("/u/history/sell");
+            console.log(response.json());
+          } else {
+            await Swal.fire({
+              title: "Create Failed, please try again",
+              icon: "error",
+              background: "#40477B",
+              color: "#F5F1F0",
+              iconColor: "#FF8BBC",
+              showConfirmButton: false,
+              timer: 5000,
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    });
+  }
+
+  // useEffect(() => {
+  //   console.log(meta);
+  // }, [meta]);
 
   return (
     <main className="bg-[#353966] flex flex-col">
       <header className="borde self-stretch flex w-full flex-col pt-4 border-solid border-black max-md:max-w-full"></header>
       <section className="self-center w-full max-w-[1336px] mt-10 px-5 max-md:max-w-full max-md:mt-10">
-        <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
+        <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0 2xl:gap-7">
           <div className="flex flex-col items-stretch max-md:w-full max-md:ml-0">
             <div className="flex grow flex-col mt-1.5 max-md:max-w-full max-md:mt-10">
               <div className="relative">
@@ -103,6 +196,7 @@ function sellItem() {
                   <input
                     type="file"
                     className="hidden"
+                    multiple
                     onChange={(e) => handleImageUpload(e)}
                   />
                   <div className="shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)] bg-[#40477B] flex w-[703px] max-w-full flex-col pt-48 pb-48 rounded-3xl">
@@ -125,19 +219,28 @@ function sellItem() {
               </div>
 
               <div className="mt-3">
-                <div className="text-stone-300 text-xl font-medium mt-1">
-                  2 files have been uploaded
+                <div
+                  className={`text-stone-300 text-xl font-medium mt-1 ${
+                    preImg.length > 0 ? "" : "hidden"
+                  }`}
+                >
+                  {preImg.length} files have been uploaded
                 </div>
                 <div className="mt-4">
-                  <div className="text-stone-300 text-xl font-medium underline">
-                    oat.JPG1
-                  </div>
-                  <div className="text-stone-300 text-xl font-medium underline">
-                    guy.JPG2
-                  </div>
-                  <div className="text-stone-300 text-xl font-medium underline">
-                    Mash.JPG3
-                  </div>
+                  {preImg.map((item, index) => (
+                    <div
+                      key={index}
+                      className="text-stone-300 text-xl font-medium underline"
+                    >
+                      <a
+                        href={item.file ? URL.createObjectURL(item.file) : ""}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {item.name}
+                      </a>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -178,6 +281,17 @@ function sellItem() {
                   onChange={(e) => handleInputChange(e)}
                 />
               </div>
+              <div className="text-stone-100 text-xl font-medium ml-7 max-md:ml-2.5 mt-3">
+                Quantity
+              </div>
+              <div className="text-neutral-300 text-xl font-medium shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] w-[200px] max-w-full mt-2.5 pt-6 pb-5 rounded-[50px] max-md:pl-2 flex">
+                <input
+                  type="number"
+                  id="quantity"
+                  className="focus:outline-none bg-[#40477B] w-[200px] px-5 rounded-xl text-center"
+                  onChange={(e) => handleInputChange(e)}
+                />
+              </div>
               <div className="text-stone-100 text-xl font-medium ml-7 mt-5 max-md:ml-2.5">
                 Your bid starts at
               </div>
@@ -193,9 +307,9 @@ function sellItem() {
                 </div>
                 <div className="bg-[#40477B] mt-3 max-md:pl-2 w-32 flex flex-col py-2 rounded-[50px] text-xl font-medium shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)]">
                   <input
-                    type="text"
+                    type="number"
                     id="startPrice"
-                    className="focus:outline-none text-3xl flex-grow min-h-[50px] bg-[#40477B] rounded-[50px] text-stone-100 text-center px-2"
+                    className="focus:outline-none text-2xl flex-grow min-h-[50px] bg-[#40477B] rounded-[50px] text-stone-100 text-center px-2"
                     onChange={(e) => handleInputChange(e)}
                   />
                 </div>
@@ -231,6 +345,8 @@ function sellItem() {
                   id="hr"
                   type="number"
                   defaultValue={currentTime.hr}
+                  min="0"
+                  max="23"
                   className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]"
                   onChange={(e) => handleTime(e)}
                 />
@@ -241,6 +357,8 @@ function sellItem() {
                   id="min"
                   type="number"
                   defaultValue={currentTime.min}
+                  min="0"
+                  max="60"
                   className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]"
                   onChange={(e) => handleTime(e)}
                 />
@@ -264,6 +382,7 @@ function sellItem() {
           </span>
         </button>
       </footer>
+      <BlockUI block={block} setBlock={setBlock} />
     </main>
   );
 }
