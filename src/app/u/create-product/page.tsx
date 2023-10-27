@@ -6,11 +6,15 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BlockUI from "../../../../components/block";
 import Swal from "sweetalert2";
+// import { useSession } from "next-auth/react";
+// import { getToken } from "next-auth/jwt";
 
 function sellItem() {
   const [block, setBlock] = useState(false);
-  const testToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJzdHVkZW50SWQiOiIwMDAwIiwiaWF0IjoxNjk4MzA2MDgzLCJleHAiOjE3MDYwODIwODN9.aYPClY_cj9cDGTPmuh4aXq1y42GgzIWd1JQBNtstLlo";
+  // const { data: session, status } = useSession();
+  // const access_token = session?.user.access_token;
+  // console.log(session);
+
   const date = new Date();
   const [startDate, setStartDate] = useState(null);
 
@@ -25,7 +29,7 @@ function sellItem() {
   };
 
   const defaultdata = {
-    studentId: "0000",
+    studentId: "1236",
     productName: "",
     description: "",
     quantity: 0,
@@ -50,14 +54,13 @@ function sellItem() {
       setPreImg(updatedPreImg);
       reader.readAsDataURL(file);
       console.log(updatedPreImg);
-      
     }
   };
 
   const handleInputChange = (e: { target: { id: any; value: any } }) => {
     let { id, value } = e.target;
-    if (id === 'startPrice' || id === 'quantity') {
-      value = Number(value)
+    if (id === "startPrice" || id === "quantity") {
+      value = Number(value);
     }
     setMeta({
       ...meta,
@@ -114,7 +117,7 @@ function sellItem() {
             const res = await fetch("http://localhost:4000/aws/upload-image", {
               method: "POST",
               headers: {
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJzdHVkZW50SWQiOiIwMDAwIiwiaWF0IjoxNjk4MzQ0Mjg0LCJleHAiOjE3MDYxMjAyODR9.7b_4d3S0xeB35J04OyOPNFsT2rpa8oSamA_ZQ9ZvOrE`,
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
               },
               body: formData,
             });
@@ -136,16 +139,17 @@ function sellItem() {
             image: imageMetaData,
           };
           console.log(JSON.stringify(updatedMeta));
-          
+
           const response = await fetch("http://localhost:4000/product/add", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE0LCJzdHVkZW50SWQiOiIwMDAwIiwiaWF0IjoxNjk4MzQ0Mjg0LCJleHAiOjE3MDYxMjAyODR9.7b_4d3S0xeB35J04OyOPNFsT2rpa8oSamA_ZQ9ZvOrE`,
+              // Authorization: `Bearer ${access_token}`,
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
             },
             body: JSON.stringify(updatedMeta),
           });
-          if (response.ok) {            
+          if (response.ok) {
             setBlock(false);
             await Swal.fire({
               title: "Create Complete",
@@ -156,9 +160,8 @@ function sellItem() {
               showConfirmButton: false,
               timer: 5000,
             });
-            linkPage('/u/history/sell')
+            linkPage("/u/history/sell");
             console.log(response.json());
-            
           } else {
             await Swal.fire({
               title: "Create Failed, please try again",
@@ -229,8 +232,12 @@ function sellItem() {
                       key={index}
                       className="text-stone-300 text-xl font-medium underline"
                     >
-                      <a href={item.file ? URL.createObjectURL(item.file) : ''} target="_blank" rel="noopener noreferrer">
-                      {item.name}
+                      <a
+                        href={item.file ? URL.createObjectURL(item.file) : ""}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {item.name}
                       </a>
                     </div>
                   ))}
@@ -338,7 +345,8 @@ function sellItem() {
                   id="hr"
                   type="number"
                   defaultValue={currentTime.hr}
-                  min="0" max="23"
+                  min="0"
+                  max="23"
                   className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]"
                   onChange={(e) => handleTime(e)}
                 />
@@ -349,7 +357,8 @@ function sellItem() {
                   id="min"
                   type="number"
                   defaultValue={currentTime.min}
-                  min="0" max="60"
+                  min="0"
+                  max="60"
                   className="w-[60px] h-[60px] text-center bg-[#40477B] text-stone-100 rounded-[50px] text-2xl shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)]"
                   onChange={(e) => handleTime(e)}
                 />
