@@ -8,7 +8,7 @@ import Loading from "../../../../../components/loading";
 
 function History() {
   const [product, setProduct] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // State to manage loading
+  const [isLoading, setIsLoading] = useState(true); 
 
 
   useEffect(() => {
