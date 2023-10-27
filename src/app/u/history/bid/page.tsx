@@ -3,9 +3,13 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import BlockUI from "../../../../../components/block";
+import Loading from "../../../../../components/loading";
 
 function History() {
   const [product, setProduct] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // State to manage loading
+
 
   useEffect(() => {
     getData();
@@ -23,13 +27,22 @@ function History() {
       .then((response) => setProduct(response))
       .catch((err) => {
         console.error("err", err);
-      });
+      }).finally(() => {
+        setIsLoading(false);
+      });;
   }
 
   const [reviewStatus, setReviewStatus] = useState(true);
   return (
     <>
-      <div className="flex flex-col bg-[#353966] h-full">
+    <div className="bg-[#353966]">{isLoading && (
+          <>
+            <BlockUI block={true}/>
+            <Loading />
+          </>
+        )}</div>
+    
+    {!isLoading && ( <div className="flex flex-col bg-[#353966] h-full">
         <div className="flex flex-row gap-5 mx-8 m-5 text-stone-100 font-normal text-2xl">
           In Progress
         </div>
@@ -141,7 +154,8 @@ function History() {
               </div>
             ))}
         </div>
-      </div>
+      </div>)}
+     
     </>
   );
 }
