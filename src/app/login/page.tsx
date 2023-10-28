@@ -3,6 +3,8 @@ import Image from "next/image";
 import React from "react";
 import { cookies } from "next/headers";
 import { getCsrfToken } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 interface user {
   studentId: number;
@@ -11,6 +13,10 @@ interface user {
 }
 
 const LoginPage = async () => {
+  // const session = await getServerSession();
+  // if (session) {
+  //   return redirect("/u");
+  // }
   const csrfToken = await getCsrfToken({
     req: {
       headers: {

@@ -1,179 +1,117 @@
+"use client";
 import Image from "next/image";
-function History() {
+import { useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+
+import useCountdown from "@/hooks/useCountdown";
+import { HistoryProductBox } from "../../../../../components/HistoryProductBox";
+
+function useFetchAvailable() {
+  const [loadingOnAvailable, setLoadingOnAvailable] = useState(true);
+  const [errorOnAvailable, setErrorOnAvailable] = useState(false);
+  const [availableList, setAvailableList] = useState<any[]>([]);
+
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+
+  const sendQuery = useCallback(async () => {
+    if (status === "loading") return;
+    try {
+      setLoadingOnAvailable(true);
+      setErrorOnAvailable(false);
+      const res = await axios.get(`http://localhost:4000/product/available`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      setAvailableList([...res.data]);
+      setLoadingOnAvailable(false);
+    } catch (err) {
+      setErrorOnAvailable(true);
+    }
+  }, [access_token, status]);
+
+  useEffect(() => {
+    sendQuery();
+  }, [status, availableList]);
+
+  return { loadingOnAvailable, errorOnAvailable, availableList };
+}
+
+function useFetchExpired() {
+  const [loadingOnExpired, setLoadingOnExpired] = useState(true);
+  const [errorOnExpired, setErrorOnExpired] = useState(false);
+  const [expiredList, setExpiredList] = useState<any[]>([]);
+
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+
+  const sendQuery = useCallback(async () => {
+    if (status === "loading") return;
+    try {
+      setLoadingOnExpired(true);
+      setErrorOnExpired(false);
+      const res = await axios.get(`http://localhost:4000/product/expired`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      setExpiredList([...res.data]);
+      setLoadingOnExpired(false);
+    } catch (err) {
+      setErrorOnExpired(true);
+    }
+  }, [access_token, status]);
+
+  useEffect(() => {
+    sendQuery();
+  }, [status]);
+
+  return { loadingOnExpired, errorOnExpired, expiredList };
+}
+
+function MySell() {
+  const { loadingOnAvailable, errorOnAvailable, availableList } =
+    useFetchAvailable();
+  const { loadingOnExpired, errorOnExpired, expiredList } = useFetchExpired();
+
+  //Timer function
+  const { secondsLeft, start } = useCountdown();
+
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+  const access_studentId = session?.user.studentId;
+
+  async function setStart() {
+    if (status === "loading") return;
+
+    try {
+      start(60);
+    } catch (error) {}
+  }
+  useEffect(() => {
+    setStart();
+  }, [status]);
+
   return (
     <>
       <div className="flex flex-col bg-[#353966] h-full">
-        <div className="flex flex-row gap-5 mx-8 m-5 text-stone-100 font-normal text-2xl">
+        <div className="mx-8 my-5 text-stone-100 font-normal text-2xl">
           In Progress
         </div>
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B]">
-            <div className="flex flex-row gap-6">
-              <div className="flex flex-col">
-                <div className="rounded-md">
-                  <Image
-                    src="/images/Rectangle 22.png"
-                    alt="logo"
-                    className="self-center flex justify-center items-center py-1 px-1.5 rounded-[20px]"
-                    width={250}
-                    height={146}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-5 py-1.5">
-                <div>
-                  <div className="text-2xl font-bold">Product Name</div>
-                  <div className="flex flex-row justify-start">
-                    <div className="rounded-full bg-[#FF8BBC] w-[29px] h-[29px] flex items justify-center shadow-black shadow-inner py-2">
-                      <Image
-                        src="/images/icons/Light-bulb.svg"
-                        alt="logo"
-                        className="self-center flex justify-center items-center py-2 mt-1"
-                        width={23}
-                        height={23}
-                      />
-                    </div>
-                    <div className="pt-0.5 ml-1 px-1 text-lg font-medium">
-                      2000 bulbs
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-start mt-0.5 flex-col gap-2">
-                  <div className="flex items-end font-semibold">
-                    Score
-                  </div>
-                  <div className="flex flex-row gap-2">
-                    <Image
-                      src="/images/icons/review.svg"
-                      alt="review icon"
-                      width={29}
-                      height={29}
-                    />
-                    <Image
-                      src="/images/icons/review.svg"
-                      alt="review icon"
-                      width={29}
-                      height={29}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col flex-1 text-end text-[#F5F1F073]">
-                <div>10.09.2023</div>
-                <div className="">sell by user03</div>
-              </div>
-            </div>
-          </div>
+        <div className="flex flex-col gap-4">
+          {availableList.map((item) => (
+            <HistoryProductBox key={item.id} product={item} />
+          ))}
         </div>
         <div className="flex flex-row gap-5 mx-8 m-2 mb-3 text-stone-100 font-normal text-2xl">
           Finished
         </div>
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B]">
-            <div className="flex flex-row gap-6">
-              <div className="flex flex-col">
-                <div className="rounded-md">
-                  <Image
-                    src="/images/Rectangle 22.png"
-                    alt="logo"
-                    className="self-center flex justify-center items-center py-1 px-1.5 rounded-[20px]"
-                    width={250}
-                    height={146}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-5 py-1.5">
-                <div>
-                  <div className="text-2xl font-bold">Product Name</div>
-                  <div className="flex flex-row justify-start">
-                    <div className="rounded-full bg-[#FF8BBC] w-[29px] h-[29px] flex items justify-center shadow-black shadow-inner py-2">
-                      <Image
-                        src="/images/icons/Light-bulb.svg"
-                        alt="logo"
-                        className="self-center flex justify-center items-center py-2 mt-1"
-                        width={23}
-                        height={23}
-                      />
-                    </div>
-                    <div className="pt-0.5 ml-1 px-1 text-lg font-medium">
-                      2000 bulbs
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-start mt-0.5 flex-col gap-2">
-                  <div className="flex items-end font-semibold">
-                    review this product
-                  </div>
-                  <div>
-                    <Image
-                      src="/images/icons/review.svg"
-                      alt="review icon"
-                      width={29}
-                      height={29}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col flex-1 text-end text-[#F5F1F073]">
-                <div>10.09.2023</div>
-                <div className="">sell by user03</div>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col mx-4 rounded-[20px] py-3 px-2 text-stone-100 mb-3 shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset] bg-[#40477B]">
-            <div className="flex flex-row gap-6">
-              <div className="flex flex-col">
-                <div className="rounded-md">
-                  <Image
-                    src="/images/Rectangle 22.png"
-                    alt="logo"
-                    className="self-center flex justify-center items-center py-1 px-1.5 rounded-[20px]"
-                    width={250}
-                    height={146}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-5 py-1.5">
-                <div>
-                  <div className="text-2xl font-bold">Product Name</div>
-                  <div className="flex flex-row justify-start">
-                    <div className="rounded-full bg-[#FF8BBC] w-[29px] h-[29px] flex items justify-center shadow-black shadow-inner py-2">
-                      <Image
-                        src="/images/icons/Light-bulb.svg"
-                        alt="logo"
-                        className="self-center flex justify-center items-center py-2 mt-1"
-                        width={23}
-                        height={23}
-                      />
-                    </div>
-                    <div className="pt-0.5 ml-1 px-1 text-lg font-medium">
-                      2000 bulbs
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-start mt-0.5 flex-col gap-2">
-                  <div className="flex items-end font-semibold">
-                    review this product
-                  </div>
-                  <div>
-                    <Image
-                      src="/images/icons/review.svg"
-                      alt="review icon"
-                      width={29}
-                      height={29}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col flex-1 text-end text-[#F5F1F073]">
-                <div>10.09.2023</div>
-                <div className="">sell by user03</div>
-              </div>
-            </div>
-          </div>
+        <div className="flex flex-col gap-4">
+          {expiredList.map((item) => (
+            <HistoryProductBox key={item.id} product={item} />
+          ))}
         </div>
       </div>
     </>
   );
 }
-export default History;
+
+export default MySell;

@@ -32,7 +32,7 @@ function useFetch(query, page) {
         setList([...res.data]);
         setLoading(false);
       } catch (err) {
-        setError(err);
+        setError(true);
       }
     },
     [query, page, access_token, status]
@@ -45,7 +45,7 @@ function useFetch(query, page) {
   return { loading, error, list };
 }
 
-function ProductList(props: any) {
+function ProductList() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const { loading, error, list } = useFetch(query, page);
@@ -100,7 +100,8 @@ function ProductList(props: any) {
             placeholder="What are you looking for...?"
           ></input>
         </div>
-        <div className="flex flex-wrap">
+
+        <div className="flex flex-wrap gap-4 justify-around">
           {list.map((item, i) => (
             <ProductBox key={item.id} product={item} />
           ))}

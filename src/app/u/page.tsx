@@ -1,9 +1,45 @@
 "use client";
 import Image from "next/image";
 import Slider from "../../../components/slider";
+import { ProductBox } from "../../../components/ProductBox";
+import { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import axios from "axios";
 // import { usePathname } from "next/navigation";
 
+function useFetchAvailable() {
+  const [loadingOnAvailable, setLoadingOnAvailable] = useState(true);
+  const [errorOnAvailable, setErrorOnAvailable] = useState(false);
+  const [availableList, setAvailableList] = useState<any[]>([]);
+
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+
+  const sendQuery = useCallback(async () => {
+    if (status === "loading") return;
+    try {
+      setLoadingOnAvailable(true);
+      setErrorOnAvailable(false);
+      const res = await axios.get(`http://localhost:4000/product/available`, {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      setAvailableList([...res.data]);
+      setLoadingOnAvailable(false);
+    } catch (err) {
+      setErrorOnAvailable(true);
+    }
+  }, [access_token, status]);
+
+  useEffect(() => {
+    sendQuery();
+  }, [status]);
+
+  return { loadingOnAvailable, errorOnAvailable, availableList };
+}
+
 function Home(props: any) {
+  const { loadingOnAvailable, errorOnAvailable, availableList } =
+    useFetchAvailable();
   return (
     <main className="bg-[#353966] min-h-screen">
       <div>
@@ -27,49 +63,9 @@ function Home(props: any) {
           </div>
 
           <div className="flex flex-row mx-[30px] gap-14">
-            <div className="bg-[#40477B] p-3 flex flex-col rounded-[20px] shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset]">
-              <div className="">
-                <Image
-                  alt="Sample img"
-                  className="aspect-auto object-cover object-center w-full overflow-hidden self-stretch rounded-xl"
-                  src="/images/Rectangle 22.png"
-                  width={255}
-                  height={159}
-                />
-              </div>
-              <div className="flex flex-col gap-6">
-                <div className="mt-3 text-stone-100 text-2xl font-extrabold">
-                  Product Name
-                </div>
-                <div className="flex flex-row justify-end">
-                  <div className="flex justify-center items-center bg-[#40A9FD] w-[140px] h-[31px] rounded-[50px] text-[20px] text-slate-100 py-5 shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] font-semibold">
-                    View all
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-[#40477B] p-3 flex flex-col rounded-[20px] shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset]">
-              <div>
-                <Image
-                  alt="Sample img"
-                  className="aspect-auto object-cover object-center w-full overflow-hidden self-stretch rounded-xl"
-                  src="/images/Rectangle 22.png"
-                  width={255}
-                  height={159}
-                />
-              </div>
-              <div className="flex flex-col gap-6">
-                <div className="mt-3 text-stone-100 text-2xl font-extrabold">
-                  Product Name
-                </div>
-                <div className="flex flex-row justify-end">
-                  <div className="flex justify-center items-center bg-[#40A9FD] w-[140px] h-[31px] rounded-[50px] text-[20px] text-slate-100 py-5 shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] font-semibold">
-                    View all
-                  </div>
-                </div>
-              </div>
-            </div>
+            {availableList.map((item, i) => (
+              <ProductBox key={item.id} product={item} />
+            ))}
           </div>
         </div>
         <div className="flex flex-col px-[51px] gap-7 items-center">
@@ -88,71 +84,9 @@ function Home(props: any) {
             </div>
           </div>
           <div className="flex flex-row gap-14">
-            <div className="bg-[#40477B] p-3 flex flex-col rounded-[20px] shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset]">
-              <div>
-                <Image
-                  alt="Sample img"
-                  className="aspect-auto object-cover object-center w-full overflow-hidden self-stretch rounded-xl"
-                  src="/images/Rectangle 22.png"
-                  width={255}
-                  height={159}
-                />
-              </div>
-              <div className="flex flex-col gap-6">
-                <div className="mt-3 text-stone-100 text-2xl font-extrabold">
-                  Product Name
-                </div>
-                <div className="flex flex-row justify-end">
-                  <div className="flex justify-center items-center bg-[#40A9FD] w-[140px] h-[31px] rounded-[50px] text-[20px] text-slate-100 py-5 shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] font-semibold">
-                    View all
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-[#40477B] p-3 flex flex-col rounded-[20px] shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset]">
-              <div>
-                <Image
-                  alt="Sample img"
-                  className="aspect-auto object-cover object-center w-full overflow-hidden self-stretch rounded-xl"
-                  src="/images/Rectangle 22.png"
-                  width={255}
-                  height={159}
-                />
-              </div>
-              <div className="flex flex-col gap-6">
-                <div className="mt-3 text-stone-100 text-2xl font-extrabold">
-                  Product Name
-                </div>
-                <div className="flex flex-row justify-end">
-                  <div className="flex justify-center items-center bg-[#40A9FD] w-[140px] h-[31px] rounded-[50px] text-[20px] text-slate-100 py-5 shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] font-semibold">
-                    View all
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-[#40477B] p-3 flex flex-col rounded-[20px] shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset]">
-              <div>
-                <Image
-                  alt="Sample img"
-                  className="aspect-auto object-cover object-center w-full overflow-hidden self-stretch rounded-xl"
-                  src="/images/Rectangle 22.png"
-                  width={255}
-                  height={159}
-                />
-              </div>
-              <div className="flex flex-col gap-6">
-                <div className="mt-3 text-stone-100 text-2xl font-extrabold">
-                  Product Name
-                </div>
-                <div className="flex flex-row justify-end">
-                  <div className="flex justify-center items-center bg-[#40A9FD] w-[140px] h-[31px] rounded-[50px] text-[20px] text-slate-100 py-5 shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] font-semibold">
-                    View all
-                  </div>
-                </div>
-              </div>
-            </div>
+            {availableList.map((item, i) => (
+              <ProductBox key={item.id} product={item} />
+            ))}
           </div>
         </div>
       </div>
