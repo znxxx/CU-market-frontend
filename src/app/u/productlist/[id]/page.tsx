@@ -1,10 +1,160 @@
-import React from "react";
+"use client";
+'use strict';
+import React, { useState } from "react";
 import Image from "next/image";
 import Navbar from "../../../../../components/Navbar";
+import { useEffect } from "react";
+import { useCountdown } from "../../../../../components/hooks/countdown";
+import io from "socket.io-client";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-function ProductComponent() {
+
+
+
+function Bidpage({params}) {
+  console.log(params.id);
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+  const access_studentId = session?.user.studentId;
+  
+  
+  const [product, setProduct] = useState({});
+  const [expire, setExpire] = useState("");
+  const [currentPrice, setCurrentPrice] = useState(0);
+  const [socket, setSocket] = useState(null);
+  const [biddingData, setBiddingData] = useState({});
+  const [bidAmount, setBidAmount] = useState(0)
+  useEffect(() => {
+    getData();
+    console.log(product);
+    
+  }, []);
+
+  const router = useRouter();
+
+  const linkPage = (page: string) => {
+    router.push(page);
+  };
+
+  const [days, hours, minutes, seconds] = useCountdown(expire);
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const socket = io("http://localhost:4000/auction");
+    setSocket(socket);
+    socket.emit("enterRoom", `bid-${params.id}`);
+
+    socket.on("biddingData", (data) => {
+      const {
+        room,
+        sellerStudentId,
+        startPrice,
+        currentBidder,
+        currentPrice,
+        bidHistory,
+      } = data;
+      setBiddingData(data);
+    });
+
+    socket.on("newBidReceived", (data) => {
+    //   console.log("Received new bid data:", data);
+      setBiddingData((prevData) => ({
+        ...prevData,
+        currentPrice: data.currentPrice,
+        bidHistory: data.bidHistory,
+      }));
+    });
+
+    return () => {
+      // Clean up the socket connection when the component unmounts
+      socket.disconnect();
+    };
+  }, [biddingData]);
+
+  const handleBid = () => {
+    
+    const bidAmountNumber = Number(bidAmount);
+
+    if (bidAmountNumber <= biddingData?.currentPrice) {
+        Swal.fire({
+            title: "Bid error",
+            text: "Bid amount cannot be lower than the current price",
+            icon: "error",
+            background: "#40477B",
+            color: "#F5F1F0",
+            iconColor: "#FF8BBC",
+            confirmButtonColor:"#FF8BBC",
+          })
+        return; // Stop the bidding process
+      }
+    const bidData = {
+      room: `bid-${params.id}`,
+      bidderId: access_studentId,
+      bidPrice: Number(bidAmount),
+    };
+    socket.emit("newBid", bidData);
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      });
+
+      Toast.fire({
+        icon: "success",
+        title: "Bid successful",
+        background: "#40477B",
+        color: "#F5F1F0",
+        iconColor: "#FF8BBC",
+      });
+  };
+
+  function getData() {
+    fetch(`http://localhost:4000/product/details/${params.id}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        setProduct(response);
+        setExpire(response?.expiryTime);
+      })
+      .catch((err) => {
+        console.error("err", err);
+      })
+      .finally(() => {
+        // console.log(product);
+      });
+  }
+  useEffect(() => {
+    // console.log(seconds);
+    
+    if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
+        linkPage('/u/history/bid')
+    } else if (days < 0 || hours < 0 || minutes < 0 || seconds < 0) {
+        // linkPage('/hhhh')
+    }
+  }, [days, hours, minutes, seconds]);
+
+
+  
+  console.log(product.image?.at(0));
+  
   return (
-    <main className="bg-[#353966] flex flex-col">
+    <div className="bg-[#353966] flex flex-col">
       <header className="border self-stretch flex w-full pb-0 flex-col pt-4 border-solid border-black max-md:max-w-full">
         {/* <Navbar /> */}
       </header>
@@ -13,12 +163,12 @@ function ProductComponent() {
           <div className="flex flex-col items-stretch w-[44%] max-md:w-full max-md:ml-0">
             <div className="shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)] bg-[#40477B] flex grow flex-col w-full mx-auto pt-5 pb-1.5 rounded-3xl max-md:max-w-full max-md:mt-10">
               <h1 className="text-stone-100 text-5xl font-extrabold max-w-[543px] ml-5 max-md:text-4xl max-md:ml-2.5 mb-3">
-                Product Name
+                {/* {product?.productName} */}
               </h1>
               <div className="flex bg-white grow">
                 <Image
-                  src="/images/Rectangle 22.png"
-                  className="grow"
+                  src={product.image?.at(0).url}
+                  className="overflow-hidden w-[750px] h-[440px] object-cover flex self-center justify-center items-center"
                   alt="Product Image"
                   width={750}
                   height={360}
@@ -70,11 +220,11 @@ function ProductComponent() {
                   />
                 </div>
                 <div className="text-stone-100 text-3xl font-semibold self-center my-auto">
-                  start at 10 bulbs
+                  start at {product?.startPrice} bulbs
                 </div>
               </div>
               <div className="text-black text-xl self-stretch grow bg-stone-100 mt-4 pl-3.5 pr-5 pt-4 pb-8 rounded-3xl max-md:max-w-full">
-                Description...
+                {product?.description}
               </div>
               <div className="shadow-[6px_10px_30px_0px_rgba(69,13,37,0.20)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] self-stretch mt-8 pr-6 rounded-[120px] max-md:max-w-full bg-gradient-to-l from-[#6A5AFA] from-4% to-[#FF8BBC] to-68%">
                 <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
@@ -87,7 +237,9 @@ function ProductComponent() {
                         width={101}
                         height={99}
                       />
-                      <h1 className="text-5xl font-bold text-white">2,000</h1>
+                      <h1 className="text-5xl font-bold text-white">
+                        {biddingData ? biddingData?.currentPrice : "Loading..."}
+                      </h1>
                     </div>
                   </div>
                   <div className="flex flex-col items-stretch w-[63%] max-md:w-full max-md:ml-0">
@@ -96,7 +248,9 @@ function ProductComponent() {
                         Time Left
                       </div>
                       <div className="text-stone-100 text-center text-5xl font-bold -ml-0.5 -mr-1 mt-5 pr-10 max-md:max-w-full max-md:text-4xl max-md:mr-2">
-                        <p>02 : 12 : 08 : 03</p>
+                        <p>
+                          {days} : {hours} : {minutes} : {seconds}
+                        </p>
                       </div>
                       <div className="self-center flex mt-0 max-w-full items-start justify-between gap-7 max-md:justify-center max-md:ml-2.5">
                         <div className="text-stone-100 text-xl font-medium -ml-5">
@@ -126,8 +280,12 @@ function ProductComponent() {
                 type="text"
                 className="justify-start grow text-neutral-300 text-xl font-medium flex-1 my-auto mx-auto bg-indigo-500 rounded-[50px] py-3 px-auto border-transparent focus:border-transparent focus:ring-0 text-center focus:outline-none"
                 placeholder="Type in the amount"
+                onChange={(e) => setBidAmount(e.target.value)}
               />
-              <button className="text-stone-100 text-3xl font-bold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] flex-1 mt-1.5 rounded-[50px] h-[47px]">
+              <button
+                className="text-stone-100 text-3xl font-bold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] flex-1 mt-1.5 rounded-[50px] h-[47px]"
+                onClick={handleBid}
+              >
                 BIDDING
               </button>
             </section>
@@ -139,12 +297,12 @@ function ProductComponent() {
           <div className="text-stone-100 text-center text-2xl font-semibold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] w-[178px] max-w-full h-[47px] pt-2 pb-3 px-5 rounded-[50px]">
             <p>subscribe</p>
           </div>
-          <Image
+          {/* <Image
             alt="bookmark"
             src="/images/icons/bookmark.svg"
             width={55}
             height={55}
-          />
+          /> */}
         </div>
         <div className="bg-[#40477B] flex flex-col w-[743px] rounded-3xl max-md:max-w-full">
           <div className="shadow-[4px_4px_6px_0px_rgba(0,0,0,0.20)_inset,2px_2px_8px_0px_rgba(0,0,0,0.20)_inset,4px_4px_8px_0px_rgba(0,0,0,0.25)] bg-[#6A5AFA] self-stretch flex flex-col w-full pb-2 rounded-3xl max-md:max-w-full">
@@ -197,27 +355,38 @@ function ProductComponent() {
           </div>
           <div className="self-center w-[786px] max-w-full flex flex-col -ml-1 mt-3.5 text-[#D2D2D2]">
             <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
-              <div className="flex flex-col items-stretch w-[33%] max-md:w-full max-md:ml-0">
-                <div className="relative shrink-0 box-border h-auto ml-8 mt-1 mb-4">
-                  Enter some text...
+              {biddingData && biddingData.bidHistory ? (
+                <div className="self-center w-[786px] max-w-full flex flex-col -ml-1 mt-3.5 text-[#D2D2D2]">
+                  {biddingData.bidHistory.slice(0,5).map((bid, index) => (
+                    <div
+                      key={index}
+                      className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0"
+                    >
+                      <div className="flex flex-col items-stretch w-[33%] max-md:w-full max-md:ml-0">
+                        <div className="relative shrink-0 box-border h-auto ml-8 mt-1 mb-4">
+                          {bid.studentId}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-stretch w-[33%] ml-5 max-md:w-full max-md:ml-0">
+                        <div className="relative shrink-0 box-border h-auto mx-auto mt-1 mb-4">
+                          {bid.bidPrice}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-stretch w-[33%] ml-5 max-md:w-full max-md:ml-0">
+                        <div className="relative shrink-0 box-border h-auto mt-1 mb-4 mx-auto">
+                          Time
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <div className="flex flex-col items-stretch w-[33%] ml-5 max-md:w-full max-md:ml-0">
-                <div className="relative shrink-0 box-border h-auto mx-auto mt-1 mb-4">
-                  Enter some text...
-                </div>
-              </div>
-              <div className="flex flex-col items-stretch w-[33%] ml-5 max-md:w-full max-md:ml-0">
-                <div className="relative shrink-0 box-border h-auto mt-1 mb-4 mx-auto">
-                  Enter some text...
-                </div>
-              </div>
+              ) : null}
             </div>
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 
-export default ProductComponent;
+export default Bidpage;

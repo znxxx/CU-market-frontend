@@ -3,6 +3,7 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function Navbar() {
   const router = useRouter();
@@ -10,6 +11,22 @@ function Navbar() {
     router.push(page);
   };
   const pathname = usePathname();
+  const [bulb, setBulb] = useState(0)
+  useEffect(() => {
+    fetch(`http://localhost:4000/users/info`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => setBulb(response?.lightBulbs))
+      .catch((err) => {
+        console.error("err", err);
+      })
+  }, [bulb])
+  
   // console.log(pathname);
 
   return (
@@ -27,7 +44,7 @@ function Navbar() {
               />
             </div>
             <div className="text-stone-100 text-center text-xl font-medium mt-3 mb-3">
-              10,000
+              {bulb}
             </div>
           </div>
         </div>

@@ -38,7 +38,7 @@ function sellItem() {
     quantity: 0,
     startPrice: 1000,
     endPrice: 0,
-    available: false,
+    available: true,
     expiryTime: startDate,
     address: "",
     image: null,
@@ -137,11 +137,11 @@ function sellItem() {
             });
             if (res.ok) {
               const responseJson = await res.json();
-              const imageUrl = responseJson.url;
-              const imageKey = responseJson.key;
+              const url = responseJson.url;
+              const key = responseJson.key;
               imageMetaData.push({
-                imageUrl,
-                imageKey,
+                url,
+                key,
               });
             } else {
               console.error("Image upload failed");
