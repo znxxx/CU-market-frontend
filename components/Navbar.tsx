@@ -1,4 +1,5 @@
 "use client";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
@@ -52,8 +53,8 @@ function Navbar() {
           />
         </div>
       </nav>
-      <nav className="self-stretch flex w-full flex-col px-5 py-3 max-md:max-w-full gradient-bg bg-[#353966]">
-        <div className="flex w-[700px] max-w-full items-start justify-between gap-5 ml-3 max-md:justify-center max-md:ml-2.5">
+      <nav className="self-stretch flex w-full px-5 py-3 justify-between max-md:max-w-full gradient-bg bg-[#353966]">
+        <div className="flex max-w-full justify-between gap-5 ml-3 max-md:justify-center max-md:ml-2.5">
           <a
             href="/u"
             className={`text-${
@@ -99,6 +100,14 @@ function Navbar() {
             MY SELL
           </a>
         </div>
+        <button
+          onClick={() => signOut()}
+          className={
+            "text-stone-100 hover:text-[#353966] text-center text-2xl font-medium my-auto"
+          }
+        >
+          LOG OUT
+        </button>
       </nav>
     </>
   );

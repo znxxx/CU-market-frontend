@@ -3,6 +3,9 @@ import Image from "next/image";
 import React from "react";
 import { cookies } from "next/headers";
 import { getCsrfToken } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import Swal from "sweetalert2";
 
 interface user {
   studentId: number;
@@ -10,7 +13,17 @@ interface user {
   remember: boolean;
 }
 
-const LoginPage = async () => {
+const LoginPage = async ({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) => {
+  const session = await getServerSession();
+  // if (session) {
+  //   return redirect("/u");
+  // }
   const csrfToken = await getCsrfToken({
     req: {
       headers: {
@@ -18,6 +31,18 @@ const LoginPage = async () => {
       },
     },
   });
+
+  // if (session === null) {
+  //   return Swal.fire({
+  //     title: "Login error",
+  //     text: "Invalid credentials. Please try again.",
+  //     icon: "error",
+  //     background: "#40477B",
+  //     color: "#F5F1F0",
+  //     iconColor: "#FF8BBC",
+  //     confirmButtonColor: "#FF8BBC",
+  //   });
+  // }
   return (
     <section className="bg-[#353966] min-h-screen flex flex-col justify-center place-items-center px-5">
       <div className="p-8">
@@ -55,6 +80,7 @@ const LoginPage = async () => {
             className="self-stretch shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] mt-2.5 pt-5 pb-5 px-5 rounded-[50px] max-md:max-w-full max-md:pl-2"
           />
         </div>
+        {searchParams.error === "CredentialsSignin" && <div>Fail to login</div>}
         <button
           type="submit"
           className="shadow-2xl  w-[350px] max-w-full  mt-12 max-md:mt-10"

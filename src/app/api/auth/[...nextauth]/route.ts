@@ -31,7 +31,9 @@ const handler = NextAuth({
 
         if (res.ok && user) {
           return { ...user, studentId } as User;
-        } else return null;
+        } else {
+          return null;
+        }
       },
     }),
   ],
