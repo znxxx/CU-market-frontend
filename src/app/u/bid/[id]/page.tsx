@@ -6,9 +6,12 @@ import Navbar from "../../../../../components/Navbar";
 import { useEffect } from "react";
 import { useCountdown } from "../../../../../components/hooks/countdown";
 import io from "socket.io-client";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 
-function Bidpage() {
+
+function Bidpage({params}) {
   const [product, setProduct] = useState({});
   const [expire, setExpire] = useState("");
   const [currentPrice, setCurrentPrice] = useState(0);
@@ -19,6 +22,12 @@ function Bidpage() {
     getData();
   }, []);
 
+  const router = useRouter();
+
+  const linkPage = (page: string) => {
+    router.push(page);
+  };
+
   const [days, hours, minutes, seconds] = useCountdown(expire);
 
   useEffect(() => {
@@ -28,7 +37,7 @@ function Bidpage() {
   useEffect(() => {
     const socket = io("http://localhost:4000/auction");
     setSocket(socket);
-    socket.emit("enterRoom", "bid-1");
+    socket.emit("enterRoom", `bid-${params.id}`);
 
     socket.on("biddingData", (data) => {
       const {
@@ -43,7 +52,7 @@ function Bidpage() {
     });
 
     socket.on("newBidReceived", (data) => {
-      console.log("Received new bid data:", data);
+    //   console.log("Received new bid data:", data);
       setBiddingData((prevData) => ({
         ...prevData,
         currentPrice: data.currentPrice,
@@ -58,17 +67,50 @@ function Bidpage() {
   }, [biddingData]);
 
   const handleBid = () => {
+    
+    const bidAmountNumber = Number(bidAmount);
+
+    if (bidAmountNumber <= biddingData?.currentPrice) {
+        Swal.fire({
+            title: "Bid error",
+            text: "Bid amount cannot be lower than the current price",
+            icon: "error",
+            background: "#40477B",
+            color: "#F5F1F0",
+            iconColor: "#FF8BBC",
+            confirmButtonColor:"#FF8BBC",
+          })
+        return; // Stop the bidding process
+      }
     const bidData = {
-      room: "bid-1",
+      room: `bid-${params.id}`,
       bidderId: "1236",
       bidPrice: Number(bidAmount),
     };
-    
     socket.emit("newBid", bidData);
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      });
+
+      Toast.fire({
+        icon: "success",
+        title: "Bid successful",
+        background: "#40477B",
+        color: "#F5F1F0",
+        iconColor: "#FF8BBC",
+      });
   };
 
   function getData() {
-    fetch(`http://localhost:4000/product/details/1`, {
+    fetch(`http://localhost:4000/product/details/${params.id}`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -87,8 +129,15 @@ function Bidpage() {
         // console.log(product);
       });
   }
-
-  console.log(biddingData);
+  useEffect(() => {
+    // console.log(seconds);
+    
+    if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
+        linkPage('/u/history/bid')
+    } else if (days < 0 || hours < 0 || minutes < 0 || seconds < 0) {
+        // linkPage('/hhhh')
+    }
+  }, [days, hours, minutes, seconds]);
 
   return (
     <main className="bg-[#353966] flex flex-col">

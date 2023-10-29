@@ -6,11 +6,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BlockUI from "../../../../components/block";
 import Swal from "sweetalert2";
+import io from "socket.io-client";
+
 // import { useSession } from "next-auth/react";
 // import { getToken } from "next-auth/jwt";
 
 function sellItem() {
   const [block, setBlock] = useState(false);
+  const [socket, setSocket] = useState(null);
   // const { data: session, status } = useSession();
   // const access_token = session?.user.access_token;
   // console.log(session);
@@ -56,6 +59,17 @@ function sellItem() {
       console.log(updatedPreImg);
     }
   };
+
+  useEffect(() => {
+    // Establish the socket connection when the component is mounted
+    const newSocket = io("http://localhost:4000/auction");
+    setSocket(newSocket);
+
+    // Clean up the socket connection when the component unmounts
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
 
   const handleInputChange = (e: { target: { id: any; value: any } }) => {
     let { id, value } = e.target;
@@ -150,6 +164,23 @@ function sellItem() {
             body: JSON.stringify(updatedMeta),
           });
           if (response.ok) {
+            // console.log(response);
+            const data = await response.json();
+            console.log(data.id);
+            
+            if (socket) {
+              socket.emit("newProduct", {
+                room: `bid-${data.id}`,
+                sellerStudentId: data.studentId,
+                startPrice: data.startPrice,
+                currentBidder: "",
+                currentPrice: data.startPrice,
+                bidHistory: [],
+              });
+            }
+            // const socket = io("http://localhost:4000/auction");
+           
+            // console.log("After socket emit");
             setBlock(false);
             await Swal.fire({
               title: "Create Complete",
@@ -161,7 +192,7 @@ function sellItem() {
               timer: 5000,
             });
             linkPage("/u/history/sell");
-            console.log(response.json());
+            // console.log(response.json());
           } else {
             await Swal.fire({
               title: "Create Failed, please try again",
