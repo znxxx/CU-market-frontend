@@ -42,13 +42,13 @@ function useFetch(query, page) {
     sendQuery(query);
   }, [query, sendQuery, page, access_token, status]);
 
-  return { loading, error, list };
+  return { loading, error, list, sendQuery };
 }
 
 function ProductList() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const { loading, error, list } = useFetch(query, page);
+  const { loading, error, list, sendQuery } = useFetch(query, page);
   const loader = useRef(null);
   const debouncedInputTerm = useDebounce(query, 500);
 
@@ -101,9 +101,12 @@ function ProductList() {
           ></input>
         </div>
 
-        <div className="flex flex-wrap gap-4 justify-around">
+        <div
+          className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))]
+ gap-8 p-6"
+        >
           {list.map((item, i) => (
-            <ProductBox key={item.id} product={item} />
+            <ProductBox key={item.id} product={item} sendQuery={sendQuery} />
           ))}
         </div>
         {loading && <p>Loading...</p>}

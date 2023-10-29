@@ -20,7 +20,7 @@ function useFetchAvailable() {
     try {
       setLoadingOnAvailable(true);
       setErrorOnAvailable(false);
-      const res = await axios.get(`http://localhost:4000/product/available`, {
+      const res = await axios.get(`http://localhost:4000/product/lastmin`, {
         headers: { Authorization: `Bearer ${access_token}` },
       });
       setAvailableList([...res.data]);
@@ -63,7 +63,7 @@ function Home(props: any) {
           </div>
 
           <div className="flex flex-row mx-[30px] gap-14">
-            {availableList.map((item, i) => (
+            {availableList.slice(3, 5).map((item, i) => (
               <ProductBox key={item.id} product={item} />
             ))}
           </div>
@@ -84,7 +84,7 @@ function Home(props: any) {
             </div>
           </div>
           <div className="flex flex-row gap-14">
-            {availableList.map((item, i) => (
+            {availableList.slice(0, 3).map((item, i) => (
               <ProductBox key={item.id} product={item} />
             ))}
           </div>

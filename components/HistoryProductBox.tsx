@@ -3,9 +3,11 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 interface ProductBoxProps {
   product: Product;
+  sendQuery: () => Promise<void>;
 }
 interface Product {
   id: number;
@@ -23,10 +25,14 @@ interface Product {
   reviews: any;
 }
 
-export function HistoryProductBox({ product }: ProductBoxProps) {
+export function HistoryProductBox({ product, sendQuery }: ProductBoxProps) {
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+  const access_studentId = session?.user.studentId;
+
   function StarRenderer() {
     const pictures: JSX.Element[] = [];
-    if (product.reviews === undefined) return;
+    if (product.reviews.length === 0) return;
 
     for (let i = 0; i < Math.floor(product.reviews[0].star); i++) {
       pictures.push(
@@ -69,10 +75,6 @@ export function HistoryProductBox({ product }: ProductBoxProps) {
 
   const { secondsLeft, start } = useCountdown();
 
-  const { data: session, status } = useSession();
-  const access_token = session?.user.access_token;
-  const access_studentId = session?.user.studentId;
-
   function setStart() {
     const now = new Date();
     const deletePeriod = 60;
@@ -87,14 +89,25 @@ export function HistoryProductBox({ product }: ProductBoxProps) {
   }, [status]);
 
   async function handleDelete(id) {
-    try {
+    const confirm = await Swal.fire({
+      title: "Confirm?",
+      text: "Please make sure you want to delete this product. This cannot be undone",
+      icon: "warning",
+      background: "#40477B",
+      color: "#F5F1F0",
+      iconColor: "#FF8BBC",
+      confirmButtonColor: "#FF8BBC",
+      showCancelButton: true,
+    });
+    if (confirm.isConfirmed) {
       const res = await axios.delete(
         `http://localhost:4000/product/delete/${id}`,
         {
           headers: { Authorization: `Bearer ${access_token}` },
         }
       );
-    } catch (err) {}
+      await sendQuery();
+    }
   }
 
   return (
@@ -141,8 +154,10 @@ export function HistoryProductBox({ product }: ProductBoxProps) {
           <div className="basis-1/6 flex flex-col flex-1 justify-between text-end text-[#F5F1F073]">
             <div>
               <div>{DateFormat()}</div>
-              {product.buyerId !== null && (
+              {product.buyerId !== null ? (
                 <div>{`bid by ${product.buyerId}`}</div>
+              ) : (
+                <div>bid by anonymous</div>
               )}
             </div>
             {secondsLeft > 0 && product.available ? (

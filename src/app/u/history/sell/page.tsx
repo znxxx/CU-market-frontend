@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react";
 
 import useCountdown from "@/hooks/useCountdown";
 import { HistoryProductBox } from "../../../../../components/HistoryProductBox";
+import BlockUI from "../../../../../components/block";
+import Loading from "../../../../../components/loading";
 
 function useFetchAvailable() {
   const [loadingOnAvailable, setLoadingOnAvailable] = useState(true);
@@ -32,9 +34,9 @@ function useFetchAvailable() {
 
   useEffect(() => {
     sendQuery();
-  }, [status, availableList]);
+  }, [status]);
 
-  return { loadingOnAvailable, errorOnAvailable, availableList };
+  return { loadingOnAvailable, errorOnAvailable, availableList, sendQuery };
 }
 
 function useFetchExpired() {
@@ -68,7 +70,7 @@ function useFetchExpired() {
 }
 
 function MySell() {
-  const { loadingOnAvailable, errorOnAvailable, availableList } =
+  const { loadingOnAvailable, errorOnAvailable, availableList, sendQuery } =
     useFetchAvailable();
   const { loadingOnExpired, errorOnExpired, expiredList } = useFetchExpired();
 
@@ -93,22 +95,47 @@ function MySell() {
   return (
     <>
       <div className="flex flex-col bg-[#353966] h-full">
-        <div className="mx-8 my-5 text-stone-100 font-normal text-2xl">
-          In Progress
-        </div>
-        <div className="flex flex-col gap-4">
-          {availableList.map((item) => (
-            <HistoryProductBox key={item.id} product={item} />
-          ))}
-        </div>
-        <div className="flex flex-row gap-5 mx-8 m-2 mb-3 text-stone-100 font-normal text-2xl">
-          Finished
-        </div>
-        <div className="flex flex-col gap-4">
-          {expiredList.map((item) => (
-            <HistoryProductBox key={item.id} product={item} />
-          ))}
-        </div>
+        {loadingOnAvailable && loadingOnExpired ? (
+          <>
+            <BlockUI block={true} />
+            <Loading />
+          </>
+        ) : (
+          <>
+            {availableList.filter(
+              (product) => product.studentId === access_studentId
+            ).length > 0 && (
+              <>
+                <div className="mx-8 my-5 text-stone-100 font-normal text-2xl">
+                  In Progress
+                </div>
+                <div className="flex flex-col gap-4">
+                  {availableList.map((item) => (
+                    <HistoryProductBox
+                      key={item.id}
+                      product={item}
+                      sendQuery={sendQuery}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+            {expiredList.filter(
+              (product) => product.studentId === access_studentId
+            ).length > 0 && (
+              <>
+                <div className="flex flex-row gap-5 mx-8 my-5 mb-3 text-stone-100 font-normal text-2xl">
+                  Finished
+                </div>
+                <div className="flex flex-col gap-4">
+                  {expiredList.map((item) => (
+                    <HistoryProductBox key={item.id} product={item} />
+                  ))}
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
     </>
   );

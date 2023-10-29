@@ -46,6 +46,8 @@ export function ProductBox({ product }: ProductBoxProps) {
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  if (timeLeft < 0) return null;
+
   return (
     <>
       {product.available && (
@@ -57,12 +59,12 @@ export function ProductBox({ product }: ProductBoxProps) {
             {formatTime(timeLeft)}
           </div>
           <div className="bg-[#40477B] p-3 flex flex-col rounded-[20px] shadow-[8px_8px_12px_0px_rgba(0,0,0,0.20),8px_8px_20px_0px_rgba(126,130,176,0.50)_inset]">
-            <div className="container ">
+            <div className="w-full">
               <Image
                 alt={
                   product.image.length > 0 ? product.image[0].key : "Sample img"
                 }
-                className="aspect-auto object-cover object-center w-full overflow-hidden self-stretch rounded-xl"
+                className="object-cover h-[120px] w-full overflow-hidden rounded-xl"
                 src={
                   product.image.length > 0
                     ? product.image[0].url
