@@ -56,7 +56,7 @@ function History() {
       <div className="bg-[#353966]">
         {isLoading && (
           <>
-            <BlockUI block={true} />
+            {/* <BlockUI block={true} /> */}
             <Loading />
           </>
         )}

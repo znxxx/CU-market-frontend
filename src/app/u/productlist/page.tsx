@@ -8,11 +8,14 @@ import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import { ProductBox } from "../../../../components/ProductBox";
 import Image from "next/image";
+import Loading from "../../../../components/loading";
+import BlockUI from "../../../../components/block";
 
 function useFetch(query, page) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [list, setList] = useState<any[]>([]);
+  const [block, setBlock] = useState(false)
 
   const { data: session, status } = useSession();
   const access_token = session?.user.access_token;
@@ -22,6 +25,7 @@ function useFetch(query, page) {
       if (status === "loading") return;
       try {
         setLoading(true);
+        setBlock(true)
         setError(false);
         const res = await axios.get(
           `http://localhost:4000/product/search?searchField=${query}`,
@@ -31,6 +35,7 @@ function useFetch(query, page) {
         );
         setList([...res.data]);
         setLoading(false);
+        setBlock(false)
       } catch (err) {
         setError(true);
       }
@@ -109,7 +114,7 @@ function ProductList() {
             <ProductBox key={item.id} product={item} sendQuery={sendQuery} />
           ))}
         </div>
-        {loading && <p>Loading...</p>}
+        {loading && <Loading />}
         {error && <p>Error!</p>}
 
         <div ref={loader} />
