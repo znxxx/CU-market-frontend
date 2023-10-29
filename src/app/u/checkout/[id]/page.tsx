@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 export default function BuyingConclusionPage() {
@@ -8,20 +9,26 @@ export default function BuyingConclusionPage() {
   const [alreadyPaid, setAlreadyPaid] = useState(false);
   const [error, setError] = useState(false);
 
+  const { data: session, status } = useSession();
+  const access_paotungToken = session?.user.paotungToken;
+  const [lightbulb, setLightbulb] = useState<number | null>(null);
+
+  const receiverId = "";
+
   async function handlePay(e) {
     e.preventDefault();
     console.log(email);
     console.log(password);
 
-    const access_token = "";
-
-    const res = await axios.post("url", {
-      headers: { Authorization: `Bearer ${access_token}` },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
+    const res = await axios.post(
+      `https://paotooong.thinc.in.th/v1/wallet/pay/${receiverId}`,
+      {
+        headers: { Authorization: `Bearer ${access_paotungToken}` },
+        body: JSON.stringify({
+          id: "id_seller", //input pleasepay id (see at paotung website please pay id เอามาจาก backend)
+        }),
+      }
+    );
 
     if (res.status === 200) {
       setAlreadyPaid(true);

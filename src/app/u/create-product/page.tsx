@@ -6,10 +6,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BlockUI from "../../../../components/block";
 import Swal from "sweetalert2";
+import { useSession } from "next-auth/react";
 // import { useSession } from "next-auth/react";
 // import { getToken } from "next-auth/jwt";
 
-function sellItem() {
+function SellItem() {
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
   const [block, setBlock] = useState(false);
   // const { data: session, status } = useSession();
   // const access_token = session?.user.access_token;
@@ -117,7 +120,7 @@ function sellItem() {
             const res = await fetch("http://localhost:4000/aws/upload-image", {
               method: "POST",
               headers: {
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+                Authorization: `Bearer ${access_token}`,
               },
               body: formData,
             });
@@ -145,7 +148,7 @@ function sellItem() {
             headers: {
               "Content-Type": "application/json",
               // Authorization: `Bearer ${access_token}`,
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+              Authorization: `Bearer ${access_token}`,
             },
             body: JSON.stringify(updatedMeta),
           });
@@ -387,4 +390,4 @@ function sellItem() {
   );
 }
 
-export default sellItem;
+export default SellItem;

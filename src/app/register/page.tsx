@@ -23,10 +23,10 @@ function Register() {
     password: "",
     confirmpassword: "",
   };
-    const linkPage = (page: string) => {
-      router.push(page);
-    };
-  const [data, setData] = useState(defaultdata);  
+  const linkPage = (page: string) => {
+    router.push(page);
+  };
+  const [data, setData] = useState(defaultdata);
   const [formErrors, setFormErrors] = useState<FormValues>({});
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
@@ -67,6 +67,18 @@ function Register() {
             timer: 3000,
           })
         )
+        .then(() =>
+          fetch("https://paotooong.thinc.in.th/v1/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: dataToSend.email,
+              password: dataToSend.password,
+              firstName: dataToSend.firstName,
+              familyName: dataToSend.lastName,
+            }),
+          })
+        )
         .then(() => linkPage("/login"))
         .catch((err) => {
           console.error("err", err);
@@ -77,8 +89,8 @@ function Register() {
             background: "#40477B",
             color: "#F5F1F0",
             iconColor: "#FF8BBC",
-            confirmButtonColor:"#FF8BBC",
-          })
+            confirmButtonColor: "#FF8BBC",
+          });
         });
     }
   };

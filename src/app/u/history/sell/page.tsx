@@ -92,6 +92,19 @@ function MySell() {
     setStart();
   }, [status]);
 
+  if (
+    availableList.filter((product) => product.studentId === access_studentId)
+      .length > 0 &&
+    expiredList.filter((product) => product.studentId === access_studentId)
+      .length > 0
+  )
+    return (
+      <div className="flex flex-col bg-[#353966] h-full">
+        <h1 className="mx-8 my-5 text-stone-100 font-normal text-2xl">
+          You have no selling product right now!
+        </h1>
+      </div>
+    );
   return (
     <>
       <div className="flex flex-col bg-[#353966] h-full">

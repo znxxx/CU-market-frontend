@@ -28,7 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "components/Navbar.tsx",
-    "src/app/u/buyingconclusion"
+    "src/app/u/checkout"
   ],
   "exclude": ["node_modules"]
 }

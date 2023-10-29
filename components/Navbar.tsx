@@ -1,8 +1,10 @@
 "use client";
-import { signOut } from "next-auth/react";
+import axios from "axios";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 function Navbar() {
   const router = useRouter();
@@ -11,6 +13,21 @@ function Navbar() {
   };
   const pathname = usePathname();
   // console.log(pathname);
+
+  const { data: session, status } = useSession();
+  const access_paotungToken = session?.user.paotungToken;
+  const [lightbulb, setLightbulb] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function getMoney() {
+      if (status === "loading") return;
+      const res = await axios.get("https://paotooong.thinc.in.th/v1/auth/me", {
+        headers: { Authorization: `Bearer ${access_paotungToken}` },
+      });
+      setLightbulb(res.data.user.money);
+    }
+    getMoney();
+  }, [access_paotungToken, status]);
 
   return (
     <>
@@ -27,7 +44,7 @@ function Navbar() {
               />
             </div>
             <div className="text-stone-100 text-center text-xl font-medium mt-3 mb-3">
-              10,000
+              {lightbulb === null ? "loading" : lightbulb}
             </div>
           </div>
         </div>

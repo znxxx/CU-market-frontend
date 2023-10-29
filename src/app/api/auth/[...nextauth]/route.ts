@@ -30,7 +30,31 @@ const handler = NextAuth({
         const user = await res.json();
 
         if (res.ok && user) {
-          return { ...user, studentId } as User;
+          const resRegister = await fetch("http://localhost:4000/users/info", {
+            headers: { Authorization: `Bearer ${user.access_token}` },
+          });
+          const registerInfo = await resRegister.json();
+
+          const resPaotung = await fetch(
+            "https://paotooong.thinc.in.th/v1/auth/login",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: registerInfo.email,
+                password,
+              }),
+            }
+          );
+
+          const paotungToken = await resPaotung.json();
+          return {
+            ...user,
+            studentId,
+            paotungToken: paotungToken.token.accessToken,
+          } as User;
         } else {
           return null;
         }
@@ -52,6 +76,7 @@ const handler = NextAuth({
 
       session.user.access_token = token.access_token as string;
       session.user.studentId = token.studentId as string;
+      session.user.paotungToken = token.paotungToken as string;
 
       return session;
     },
@@ -59,6 +84,7 @@ const handler = NextAuth({
       if (user) {
         token.access_token = user.access_token;
         token.studentId = user.studentId;
+        token.paotungToken = user.paotungToken;
       }
 
       return token;

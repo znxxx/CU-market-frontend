@@ -7,25 +7,30 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import BlockUI from "../../../../../components/block";
 import Loading from "../../../../../components/loading";
+import { useSession } from "next-auth/react";
 
 function History() {
   const [product, setProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showReview, setShowReview] = useState(false);
-  const [showEditReview, setShowEditReview] = useState(false)
+  const [showEditReview, setShowEditReview] = useState(false);
   const [selectedProductReviews, setSelectedProductReviews] = useState([]);
   const [selectedData, setSelectedData] = useState({});
 
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+
   useEffect(() => {
+    if (status === "loading") return;
     getData();
     console.log(product);
-  }, []);
+  }, [getData, status]);
   function getData() {
     fetch(`http://localhost:4000/users/history`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+        Authorization: `Bearer ${access_token}`,
       },
     })
       .then((res) => res.json())
@@ -38,19 +43,17 @@ function History() {
       });
   }
 
-
   // console.log(product[0]);
-  
 
   const [reviewStatus, setReviewStatus] = useState(true);
   const handleEditReview = (reviews) => {
     setSelectedProductReviews(reviews);
     setShowEditReview(true);
-  }
+  };
   const handleReview = (reviews) => {
     setSelectedData(reviews);
     setShowReview(true);
-  }
+  };
   return (
     <>
       <div className="bg-[#353966]">
@@ -64,8 +67,16 @@ function History() {
 
       {!isLoading && (
         <div className="flex flex-col bg-[#353966] h-full">
-          <Review showReview={showReview} setShowReview={setShowReview} reviewData={selectedData} />
-          <EditReview showEditReview={showEditReview} setShowEditReview={setShowEditReview} reviewData={selectedProductReviews} />
+          <Review
+            showReview={showReview}
+            setShowReview={setShowReview}
+            reviewData={selectedData}
+          />
+          <EditReview
+            showEditReview={showEditReview}
+            setShowEditReview={setShowEditReview}
+            reviewData={selectedProductReviews}
+          />
           <div className="flex flex-row gap-5 mx-8 m-5 text-stone-100 font-normal text-2xl">
             In Progress
           </div>
@@ -170,10 +181,10 @@ function History() {
                         onClick={() => {
                           if (p.reviews.length > 0) {
                             // console.log(p.reviews);
-                            
-                            handleEditReview(p.reviews)
+
+                            handleEditReview(p.reviews);
                           } else {
-                            handleReview(p)
+                            handleReview(p);
                           }
                         }}
                       >
