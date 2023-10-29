@@ -7,9 +7,17 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import BlockUI from "../../../../../components/block";
 import Loading from "../../../../../components/loading";
+import { useSession } from "next-auth/react";
+
 
 
 function History() {
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+  
+  
+
+
 
   
   const [product, setProduct] = useState([]);
@@ -21,7 +29,6 @@ function History() {
 
   useEffect(() => {
     getData();
-    console.log(product);
   }, []);
   function getData() {
     fetch(`http://localhost:4000/users/history`, {
@@ -172,8 +179,6 @@ function History() {
                         className="-mx-2 mt-auto ml-auto"
                         onClick={() => {
                           if (p.reviews.length > 0) {
-                            // console.log(p.reviews);
-                            
                             handleEditReview(p.reviews)
                           } else {
                             handleReview(p)

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";  
+import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 // import Swal from 'sweetalert2/dist/sweetalert2.js';
 
@@ -23,10 +23,10 @@ function Register() {
     password: "",
     confirmpassword: "",
   };
-    const linkPage = (page: string) => {
-      router.push(page);
-    };
-  const [data, setData] = useState(defaultdata);  
+  const linkPage = (page: string) => {
+    router.push(page);
+  };
+  const [data, setData] = useState(defaultdata);
   const [formErrors, setFormErrors] = useState<FormValues>({});
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
@@ -56,6 +56,18 @@ function Register() {
           console.log("res", res);
         })
         .then(() =>
+          fetch("https://paotooong.thinc.in.th/v1/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: dataToSend.email,
+              password: dataToSend.password,
+              firstName: dataToSend.firstName,
+              familyName: dataToSend.lastName,
+            }),
+          })
+        )
+        .then(() =>
           Swal.fire({
             title: "Register Complete",
             text: "You will direct to homepage in 3 seconds.",
@@ -77,8 +89,8 @@ function Register() {
             background: "#40477B",
             color: "#F5F1F0",
             iconColor: "#FF8BBC",
-            confirmButtonColor:"#FF8BBC",
-          })
+            confirmButtonColor: "#FF8BBC",
+          });
         });
     }
   };

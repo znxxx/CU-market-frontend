@@ -1,32 +1,43 @@
 "use client";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
-const Review = ({ showReview, setShowReview, reviewData, }) => {
+const Review = ({ showReview, setShowReview, reviewData }) => {
   const [rating, setRating] = useState(0);
-  const [selected, setSelected] = useState(false);
-  const defaultdata = {
-    productId: reviewData?.id, 
-    reviewerId: reviewData?.studentId,
-    star: rating,
-    reviewDescription: "",
-  };
-  const [data, setData] = useState(defaultdata);
+  const [data, setData] = useState({});
+  const [description, setDescription] = useState("");
+  
+  // Set productId and reviewerId once when reviewData changes
+  useEffect(() => {
+    if (reviewData) {
+      const productId = reviewData.id;
+      const reviewerId = reviewData.studentId;
+      setData({
+        productId,
+        reviewerId,
+        star: rating,
+        reviewDescription: description
+      });
+    }
+  }, [reviewData, rating]);
 
-  const handleInputChange = (e: { target: { id: any; value: any } }) => {
+  const handleInputChange = (e) => {
     let { id, value } = e.target;
-    setData({
-      ...data,
-      [id]: value,
-    });
+    if (id === "reviewDescription") {
+      setDescription(value);
+    }
   };
+
 
   const handleSubmit = () => {
     const updatedData = {
-      ...data,
-      star: rating, // Set the star property to the current rating
-    };
-
+        productId: reviewData?.id,
+        reviewerId: reviewData?.studentId,
+        star: rating,
+        reviewDescription: description,
+      };
+    console.log(updatedData);
     fetch("http://localhost:4000/review/add/", {
       method: "POST",
       headers: {
@@ -38,11 +49,40 @@ const Review = ({ showReview, setShowReview, reviewData, }) => {
       .then((res) => res.json())
       .catch((err) => {
         console.error("err", err);
+      }) .then(() => {
+        setShowReview(false);
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: "Review successful",
+          background: "#40477B",
+          color: "#F5F1F0",
+          iconColor: "#FF8BBC",
+        });
+      })
+      .then(() => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       });
     // .finally(() => {
     //   // setIsLoading(false);
     // });
   };
+
+  console.log(data);
+  
 
   return (
     showReview ?  <div className="fixed top-0 bottom-0 left-0 right-0 z-[0] w-full h-full bg-[rgba(0,0,0,0.25)] overflow-hidden flex items-center justify-center pointer-events-auto">
