@@ -1,26 +1,74 @@
 "use client";
+'use strict';
 import React, { useState } from "react";
 import Image from "next/image";
 import Navbar from "../../../../../components/Navbar";
 import { useEffect } from "react";
 import { useCountdown } from "../../../../../components/hooks/countdown";
+import io from "socket.io-client";
+
+
 function Bidpage() {
   const [product, setProduct] = useState({});
-  const [expire, setExpire] = useState("")
+  const [expire, setExpire] = useState("");
+  const [currentPrice, setCurrentPrice] = useState(0);
+  const [socket, setSocket] = useState(null);
+  const [biddingData, setBiddingData] = useState({});
+  const [bidAmount, setBidAmount] = useState(0)
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const [days, hours, minutes, seconds] = useCountdown(expire);
 
   useEffect(() => {
     getData();
   }, []);
-  useEffect(() => {
-      console.log(expire);
-    }, [expire]);
-    
-    const [days, hours, minutes, seconds] = useCountdown(expire);
 
- 
+  useEffect(() => {
+    const socket = io("http://localhost:4000/auction");
+    setSocket(socket);
+    socket.emit("enterRoom", "bid-1");
+
+    socket.on("biddingData", (data) => {
+      const {
+        room,
+        sellerStudentId,
+        startPrice,
+        currentBidder,
+        currentPrice,
+        bidHistory,
+      } = data;
+      setBiddingData(data);
+    });
+
+    socket.on("newBidReceived", (data) => {
+      console.log("Received new bid data:", data);
+      setBiddingData((prevData) => ({
+        ...prevData,
+        currentPrice: data.currentPrice,
+        bidHistory: data.bidHistory,
+      }));
+    });
+
+    return () => {
+      // Clean up the socket connection when the component unmounts
+      socket.disconnect();
+    };
+  }, [biddingData]);
+
+  const handleBid = () => {
+    const bidData = {
+      room: "bid-1",
+      bidderId: "1236",
+      bidPrice: Number(bidAmount),
+    };
+    
+    socket.emit("newBid", bidData);
+  };
 
   function getData() {
-    fetch(`http://localhost:4000/product/details/17`, {
+    fetch(`http://localhost:4000/product/details/1`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -28,8 +76,10 @@ function Bidpage() {
       },
     })
       .then((res) => res.json())
-      .then((response) => {setProduct(response)
-    setExpire(response?.expiryTime)})
+      .then((response) => {
+        setProduct(response);
+        setExpire(response?.expiryTime);
+      })
       .catch((err) => {
         console.error("err", err);
       })
@@ -37,6 +87,8 @@ function Bidpage() {
         // console.log(product);
       });
   }
+
+  console.log(biddingData);
 
   return (
     <main className="bg-[#353966] flex flex-col">
@@ -122,7 +174,9 @@ function Bidpage() {
                         width={101}
                         height={99}
                       />
-                      <h1 className="text-5xl font-bold text-white">2,000</h1>
+                      <h1 className="text-5xl font-bold text-white">
+                        {biddingData ? biddingData?.currentPrice : "Loading..."}
+                      </h1>
                     </div>
                   </div>
                   <div className="flex flex-col items-stretch w-[63%] max-md:w-full max-md:ml-0">
@@ -131,7 +185,9 @@ function Bidpage() {
                         Time Left
                       </div>
                       <div className="text-stone-100 text-center text-5xl font-bold -ml-0.5 -mr-1 mt-5 pr-10 max-md:max-w-full max-md:text-4xl max-md:mr-2">
-                        <p>{days} : {hours} : {minutes} : {seconds}</p>
+                        <p>
+                          {days} : {hours} : {minutes} : {seconds}
+                        </p>
                       </div>
                       <div className="self-center flex mt-0 max-w-full items-start justify-between gap-7 max-md:justify-center max-md:ml-2.5">
                         <div className="text-stone-100 text-xl font-medium -ml-5">
@@ -161,8 +217,12 @@ function Bidpage() {
                 type="text"
                 className="justify-start grow text-neutral-300 text-xl font-medium flex-1 my-auto mx-auto bg-indigo-500 rounded-[50px] py-3 px-auto border-transparent focus:border-transparent focus:ring-0 text-center focus:outline-none"
                 placeholder="Type in the amount"
+                onChange={(e) => setBidAmount(e.target.value)}
               />
-              <button className="text-stone-100 text-3xl font-bold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] flex-1 mt-1.5 rounded-[50px] h-[47px]">
+              <button
+                className="text-stone-100 text-3xl font-bold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] flex-1 mt-1.5 rounded-[50px] h-[47px]"
+                onClick={handleBid}
+              >
                 BIDDING
               </button>
             </section>
@@ -232,21 +292,32 @@ function Bidpage() {
           </div>
           <div className="self-center w-[786px] max-w-full flex flex-col -ml-1 mt-3.5 text-[#D2D2D2]">
             <div className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0">
-              <div className="flex flex-col items-stretch w-[33%] max-md:w-full max-md:ml-0">
-                <div className="relative shrink-0 box-border h-auto ml-8 mt-1 mb-4">
-                  Enter some text...
+              {biddingData && biddingData.bidHistory ? (
+                <div className="self-center w-[786px] max-w-full flex flex-col -ml-1 mt-3.5 text-[#D2D2D2]">
+                  {biddingData.bidHistory.slice(0,5).map((bid, index) => (
+                    <div
+                      key={index}
+                      className="gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0"
+                    >
+                      <div className="flex flex-col items-stretch w-[33%] max-md:w-full max-md:ml-0">
+                        <div className="relative shrink-0 box-border h-auto ml-8 mt-1 mb-4">
+                          {bid.studentId}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-stretch w-[33%] ml-5 max-md:w-full max-md:ml-0">
+                        <div className="relative shrink-0 box-border h-auto mx-auto mt-1 mb-4">
+                          {bid.bidPrice}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-stretch w-[33%] ml-5 max-md:w-full max-md:ml-0">
+                        <div className="relative shrink-0 box-border h-auto mt-1 mb-4 mx-auto">
+                          Time
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <div className="flex flex-col items-stretch w-[33%] ml-5 max-md:w-full max-md:ml-0">
-                <div className="relative shrink-0 box-border h-auto mx-auto mt-1 mb-4">
-                  Enter some text...
-                </div>
-              </div>
-              <div className="flex flex-col items-stretch w-[33%] ml-5 max-md:w-full max-md:ml-0">
-                <div className="relative shrink-0 box-border h-auto mt-1 mb-4 mx-auto">
-                  Enter some text...
-                </div>
-              </div>
+              ) : null}
             </div>
           </div>
         </div>

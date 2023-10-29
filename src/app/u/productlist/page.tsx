@@ -12,6 +12,8 @@ import Loading from "../../../../components/loading";
 import BlockUI from "../../../../components/block";
 
 function useFetch(query, page) {
+
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [list, setList] = useState<any[]>([]);
