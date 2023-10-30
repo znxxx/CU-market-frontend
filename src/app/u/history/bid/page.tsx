@@ -8,37 +8,10 @@ import { useEffect, useState } from "react";
 import BlockUI from "../../../../../components/block";
 import Loading from "../../../../../components/loading";
 import { useSession } from "next-auth/react";
-import io from "socket.io-client";
 
 function History() {
   const { data: session, status } = useSession();
   const access_token = session?.user.access_token;
-
-  const [socket, setSocket] = useState(null);
-  const [biddingData, setBiddingData] = useState({});
-
-  useEffect(() => {
-    const socket = io("http://localhost:4000/auction");
-    setSocket(socket);
-    socket.emit("checkInProgress", `1236`);
-
-    socket.on("roomsWithBids", (data) => {
-      const {
-        room,
-        sellerStudentId,
-        startPrice,
-        currentBidder,
-        currentPrice,
-        bidHistory,
-      } = data;
-      setBiddingData(data);
-    });
-    return () => {
-      socket.disconnect();
-    };
-  }, [biddingData]);
-
-  console.log(biddingData);
 
   const [product, setProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +30,7 @@ function History() {
       method: "get",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${access_token}`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
       },
     })
       .then((res) => res.json())

@@ -133,7 +133,7 @@ function SellItem() {
             const res = await fetch("http://localhost:4000/aws/upload-image", {
               method: "POST",
               headers: {
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMwOTAsImV4cCI6MTcwNjIwOTA5MH0.WS95wiNTH1xfJRqzBbfV6fw2yriG8hbJv71kWnZsDjQ`,
+                Authorization: `Bearer ${access_token}`,
               },
               body: formData,
             });
@@ -161,7 +161,7 @@ function SellItem() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsInN0dWRlbnRJZCI6IjEyMzciLCJpYXQiOjE2OTg2NTU3ODAsImV4cCI6MTcwNjQzMTc4MH0.Cd6wL6AFyYNl7XHTGw7CKdd0kVgfSlIC1jEcRxvqSBs`,
+              Authorization: `Bearer ${access_token}`,
             },
             body: JSON.stringify(updatedMeta),
           });

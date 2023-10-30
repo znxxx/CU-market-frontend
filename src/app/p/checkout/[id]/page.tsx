@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface Detail {
   id: number;
@@ -42,6 +43,12 @@ export default function BuyingConclusionPage({
   const [receiverId, setReceiverId] = useState("");
   const [endPrice, setEndPrice] = useState(0);
   const [productDetail, setProductDetail] = useState<Detail | null>(null);
+
+  const router = useRouter();
+
+  const linkPage = (page: string) => {
+    router.push(page);
+  };
 
   useEffect(() => {
     async function getProductDetail() {
@@ -92,6 +99,7 @@ export default function BuyingConclusionPage({
 
     if (res.status === 200) {
       setAlreadyPaid(true);
+      linkPage("/");
       return;
     } else {
       setError(true);
