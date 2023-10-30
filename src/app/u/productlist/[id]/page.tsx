@@ -421,7 +421,7 @@ import { useSession } from "next-auth/react";
 import Win from "../../../../../components/won";
 
 function Bidpage({ params }) {
-  console.log(params.id);
+  // console.log(params.id);
   const [showWinComponent, setShowWinComponent] = useState(false);
   const { data: session, status } = useSession();
   const access_token = session?.user.access_token;
@@ -433,10 +433,13 @@ function Bidpage({ params }) {
   const [socket, setSocket] = useState(null);
   const [biddingData, setBiddingData] = useState({});
   const [bidAmount, setBidAmount] = useState(0);
-  useEffect(() => {
-    getData();
-    console.log(product);
-  }, []);
+  const [rating, setRating] = useState(0);
+
+  const loadData = async () => {
+    await getData();
+    await getReview();
+    // console.log(product);
+  };
 
   const router = useRouter();
 
@@ -445,10 +448,6 @@ function Bidpage({ params }) {
   };
 
   const [days, hours, minutes, seconds] = useCountdown(expire);
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   useEffect(() => {
     const socket = io("http://localhost:4000/auction");
@@ -477,7 +476,6 @@ function Bidpage({ params }) {
     });
 
     return () => {
-      // Clean up the socket connection when the component unmounts
       socket.disconnect();
     };
   }, [biddingData]);
@@ -529,13 +527,34 @@ function Bidpage({ params }) {
       method: "get",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsInN0dWRlbnRJZCI6IjEyMzciLCJpYXQiOjE2OTg2NTU3ODAsImV4cCI6MTcwNjQzMTc4MH0.Cd6wL6AFyYNl7XHTGw7CKdd0kVgfSlIC1jEcRxvqSBs`,
       },
     })
       .then((res) => res.json())
       .then((response) => {
         setProduct(response);
         setExpire(response?.expiryTime);
+      })
+      .catch((err) => {
+        console.error("err", err);
+      })
+      .finally(() => {
+        // console.log(product);
+      });
+  }
+  function getReview() {
+    fetch(`http://localhost:4000/review/star/${product?.studentId}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsInN0dWRlbnRJZCI6IjEyMzciLCJpYXQiOjE2OTg2NTU3ODAsImV4cCI6MTcwNjQzMTc4MH0.Cd6wL6AFyYNl7XHTGw7CKdd0kVgfSlIC1jEcRxvqSBs`,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+
+        setRating(res);
       })
       .catch((err) => {
         console.error("err", err);
@@ -586,7 +605,7 @@ function Bidpage({ params }) {
               <div className="flex flex-col items-stretch w-[44%] max-md:w-full max-md:ml-0">
                 <div className="shadow-[8px_8px_15px_5px_rgba(0,0,0,0.15)] bg-[#40477B] flex grow flex-col w-full mx-auto pt-5 pb-1.5 rounded-3xl max-md:max-w-full max-md:mt-10">
                   <h1 className="text-stone-100 text-5xl font-extrabold max-w-[543px] ml-5 max-md:text-4xl max-md:ml-2.5 mb-3">
-                    {/* {product?.productName} */}
+                    {product?.productName}
                   </h1>
                   <div className="flex bg-white grow">
                     <Image
@@ -718,10 +737,45 @@ function Bidpage({ params }) {
             </div>
           </section>
           <section className="self-center flex w-full max-w-[1374px] 2xl:max-w-[1700px] items-start justify-between mt-4 mb-8 px-5 max-md:max-w-full max-md:flex-wrap">
-            <div className="flex items-start gap-3 mt-3.5">
+            <div className="flex flex-col items-start gap-3 mt-3.5">
               <div className="text-stone-100 text-center text-2xl font-semibold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] w-[178px] max-w-full h-[47px] pt-2 pb-3 px-5 rounded-[50px]">
                 <p>subscribe</p>
               </div>
+              <div className="flex flex-row gap-5 mt-3">
+                <Image
+                  src="/images/icons/CU Black Market icon.svg"
+                  alt="profile-logo"
+                  className=""
+                  width={60}
+                  height={60}
+                />
+                <div className="flex flex-col gap-2">
+                  <div className="text-stone-100 font-black text-xl">
+                    {product?.studentId}
+                  </div>
+                  <div className="flex flex-row">
+                    {[...Array(5)].map((value, key) => (
+                      <Image
+                        src={`/images/icons/${
+                          key + 1 <= rating
+                            ? "Yellow Star.svg"
+                            : "White Star.svg"
+                        }`}
+                        alt="White-star"
+                        className="flex items-center cursor-pointer flex-row -m-1"
+                        width={40}
+                        height={40}
+                      />
+                    ))}
+                    <p className="text-stone-100 text-base font-normal mt-[3px]">
+                      ({rating})
+                    </p>
+                  </div>
+
+                  {/* <div className="text-stone-100 font-black text-lg">rating: {rating}</div> */}
+                </div>
+              </div>
+
               {/* <Image
           alt="bookmark"
           src="/images/icons/bookmark.svg"

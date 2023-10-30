@@ -8,10 +8,37 @@ import { useEffect, useState } from "react";
 import BlockUI from "../../../../../components/block";
 import Loading from "../../../../../components/loading";
 import { useSession } from "next-auth/react";
+import io from "socket.io-client";
 
 function History() {
   const { data: session, status } = useSession();
   const access_token = session?.user.access_token;
+
+  const [socket, setSocket] = useState(null);
+  const [biddingData, setBiddingData] = useState({});
+
+  useEffect(() => {
+    const socket = io("http://localhost:4000/auction");
+    setSocket(socket);
+    socket.emit("checkInProgress", `1236`);
+
+    socket.on("roomsWithBids", (data) => {
+      const {
+        room,
+        sellerStudentId,
+        startPrice,
+        currentBidder,
+        currentPrice,
+        bidHistory,
+      } = data;
+      setBiddingData(data);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, [biddingData]);
+
+  console.log(biddingData);
 
   const [product, setProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -143,7 +170,7 @@ function History() {
                     <div className="flex flex-col">
                       <div className="rounded-md">
                         <Image
-                          src="https://cu-black-market-s3.s3-ap-southeast-1.amazonaws.com/IMG_9262.jpeg"
+                          src={p.image[0].url}
                           alt="logo"
                           className="self-center flex justify-center items-center py-1 px-1.5 rounded-[20px] overflow-hidden w-[250px] h-[146px] object-cover"
                           width={250}
