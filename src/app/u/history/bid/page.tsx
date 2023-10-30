@@ -35,7 +35,7 @@ function History() {
       method: "get",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMyMjMsImV4cCI6MTcwNjIwOTIyM30.fNslsutsLtg1PAoQ_u6aUlRkVFgPv84XgsN8edWDCZM`,
+        Authorization: `Bearer ${access_token}`,
       },
     })
       .then((res) => res.json())
@@ -142,7 +142,7 @@ function History() {
                     <div className="flex flex-col">
                       <div className="rounded-md">
                         <Image
-                          src="https://cu-black-market-s3.s3-ap-southeast-1.amazonaws.com/IMG_9262.jpeg"
+                          src={p.image[0].url}
                           alt="logo"
                           className="self-center flex justify-center items-center py-1 px-1.5 rounded-[20px] overflow-hidden w-[250px] h-[146px] object-cover"
                           width={250}

@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 import Win from "../../../../../components/won";
 
 function Bidpage({ params }) {
-  console.log(params.id);
+  // console.log(params.id);
   const [showWinComponent, setShowWinComponent] = useState(false);
   const { data: session, status } = useSession();
   const access_token = session?.user.access_token;
@@ -24,9 +24,10 @@ function Bidpage({ params }) {
   const [socket, setSocket] = useState(null);
   const [biddingData, setBiddingData] = useState({});
   const [bidAmount, setBidAmount] = useState(0);
+  const [rating, setRating] = useState(0);
   useEffect(() => {
     getData();
-    console.log(product);
+    getReview();
   }, []);
 
   const router = useRouter();
@@ -39,6 +40,9 @@ function Bidpage({ params }) {
 
   useEffect(() => {
     getData();
+    getReview();
+    console.log(product?.studentId);
+    
   }, []);
 
   useEffect(() => {
@@ -68,7 +72,6 @@ function Bidpage({ params }) {
     });
 
     return () => {
-      // Clean up the socket connection when the component unmounts
       socket.disconnect();
     };
   }, [biddingData]);
@@ -135,6 +138,25 @@ function Bidpage({ params }) {
         // console.log(product);
       });
   }
+  function getReview() {
+    fetch(`http://localhost:4000/review/star/${product?.studentId}`, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        setRating(response);
+      })
+      .catch((err) => {
+        console.error("err", err);
+      })
+      .finally(() => {
+        // console.log(product);
+      });
+  }
   useEffect(() => {
     if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
       const highestBidder = biddingData?.bidHistory?.at(0).studentId;
@@ -150,17 +172,16 @@ function Bidpage({ params }) {
         linkPage("/u");
       }
     } else if (days < -2 || hours < -2 || minutes < -2 || seconds < -2) {
+      socket.emit("bidEnd", `bid-${params.id}`);
       linkPage("/notfound");
     }
   }, [days, hours, minutes, seconds, biddingData]);
 
   // console.log(product.image?.at(0));
   // console.log(biddingData?.bidHistory?.at(0).studentId);
-  console.log(access_studentId === biddingData?.bidHistory?.at(0).studentId);
+  // console.log(access_studentId === biddingData?.bidHistory?.at(0).studentId);
   // console.log(access_studentId);
   // console.log(biddingData?.bidHistory?.at(0).studentId);
-  
-  
 
   return (
     <>
@@ -308,10 +329,12 @@ function Bidpage({ params }) {
             </div>
           </section>
           <section className="self-center flex w-full max-w-[1374px] 2xl:max-w-[1700px] items-start justify-between mt-4 mb-8 px-5 max-md:max-w-full max-md:flex-wrap">
-            <div className="flex items-start gap-3 mt-3.5">
+            <div className="flex flex-col items-start gap-3 mt-3.5">
               <div className="text-stone-100 text-center text-2xl font-semibold shadow-[6px_10px_30px_0px_rgba(45,124,188,0.42)_inset,3px_4px_7px_0px_rgba(0,0,0,0.20)_inset] bg-[#40A9FD] w-[178px] max-w-full h-[47px] pt-2 pb-3 px-5 rounded-[50px]">
                 <p>subscribe</p>
               </div>
+              <div>{product?.studentId}</div>
+              <div>{rating}</div>
               {/* <Image
           alt="bookmark"
           src="/images/icons/bookmark.svg"

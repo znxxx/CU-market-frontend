@@ -12,13 +12,14 @@ import { useSession } from "next-auth/react";
 // import { useSession } from "next-auth/react";
 // import { getToken } from "next-auth/jwt";
 
-function sellItem() {
+function SellItem() {
   const { data: session, status } = useSession();
   const access_token = session?.user.access_token;
   const [block, setBlock] = useState(false);
   const [socket, setSocket] = useState(null);
   // const { data: session, status } = useSession();
-  // const access_token = session?.user.access_token;
+  const access_studentId = session?.user.studentId;
+
   // console.log(session);
 
   const date = new Date();
@@ -35,7 +36,7 @@ function sellItem() {
   };
 
   const defaultdata = {
-    studentId: "1236",
+    studentId: access_studentId,
     productName: "",
     description: "",
     quantity: 0,
@@ -420,4 +421,4 @@ function sellItem() {
   );
 }
 
-export default sellItem;
+export default SellItem;
