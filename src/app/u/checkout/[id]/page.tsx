@@ -13,7 +13,7 @@ export default function BuyingConclusionPage() {
   const access_paotungToken = session?.user.paotungToken;
   const [lightbulb, setLightbulb] = useState<number | null>(null);
 
-  const receiverId = "";
+  const receiverId = ""; //insert reveiverID
 
   async function handlePay(e) {
     e.preventDefault();
