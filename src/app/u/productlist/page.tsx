@@ -32,7 +32,7 @@ function useFetch(query, page) {
         const res = await axios.get(
           `http://localhost:4000/product/search?searchField=${query}`,
           {
-            headers: { Authorization: `Bearer ${access_token}` },
+            headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsInN0dWRlbnRJZCI6IjEyMzYiLCJpYXQiOjE2OTg0MzMwOTAsImV4cCI6MTcwNjIwOTA5MH0.WS95wiNTH1xfJRqzBbfV6fw2yriG8hbJv71kWnZsDjQ` },
           }
         );
         setList([...res.data]);
