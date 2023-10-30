@@ -3,29 +3,38 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
-export default function BuyingConclusionPage() {
+export default function BuyingConclusionPage({ params }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [alreadyPaid, setAlreadyPaid] = useState(false);
   const [error, setError] = useState(false);
 
   const { data: session, status } = useSession();
-//   const access_paotungToken = session?.user.paotungToken;
+  const access_token = session?.user.access_token;
+  const access_paotungToken = session?.user.paotungToken;
   const [lightbulb, setLightbulb] = useState<number | null>(null);
 
+  async function
+  const resProduct = await axios.get(
+    `https://localhost:4000/product/details/${params.id}`
+  ,{
+    headers: {Authorization: `Bearer ${access_token}`},
+  });
+
+
   const receiverId = "";
+  const endPrice = "";
 
   async function handlePay(e) {
     e.preventDefault();
-    console.log(email);
-    console.log(password);
 
     const res = await axios.post(
       `https://paotooong.thinc.in.th/v1/wallet/pay/${receiverId}`,
       {
         headers: { Authorization: `Bearer ${access_paotungToken}` },
         body: JSON.stringify({
-          id: "id_seller", //input pleasepay id (see at paotung website please pay id เอามาจาก backend)
+          id: receiverId, //input pleasepay id (see at paotung website please pay id เอามาจาก backend)
+          amount: endPrice,
         }),
       }
     );

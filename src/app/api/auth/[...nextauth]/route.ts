@@ -50,6 +50,19 @@ const handler = NextAuth({
           );
 
           const paotungToken = await resPaotung.json();
+
+          await fetch("http://localhost:4000/users/updateLightBulb", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.access_token}`,
+            },
+            body: JSON.stringify({
+              studentId,
+              token: paotungToken.token.accessToken,
+            }),
+          });
+
           return {
             ...user,
             studentId,

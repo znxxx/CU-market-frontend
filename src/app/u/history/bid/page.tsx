@@ -20,9 +20,6 @@ function History() {
   const [selectedProductReviews, setSelectedProductReviews] = useState([]);
   const [selectedData, setSelectedData] = useState({});
 
-  const { data: session, status } = useSession();
-  const access_token = session?.user.access_token;
-
   useEffect(() => {
     if (status === "loading") return;
     getData();
