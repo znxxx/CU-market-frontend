@@ -81,16 +81,16 @@ function MySell() {
   const access_token = session?.user.access_token;
   const access_studentId = session?.user.studentId;
 
-  async function setStart() {
-    if (status === "loading") return;
+  // async function setStart() {
+  //   if (status === "loading") return;
 
-    try {
-      start(60);
-    } catch (error) {}
-  }
-  useEffect(() => {
-    setStart();
-  }, [status]);
+  //   try {
+  //     start(60);
+  //   } catch (error) {}
+  // }
+  // useEffect(() => {
+  //   setStart();
+  // }, [status]);
 
   if (
     availableList.filter((product) => product.studentId === access_studentId)

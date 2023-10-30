@@ -17,9 +17,8 @@ function SellItem() {
   const access_token = session?.user.access_token;
   const [block, setBlock] = useState(false);
   const [socket, setSocket] = useState(null);
-  // const { data: session, status } = useSession();
-  // const access_token = session?.user.access_token;
-  // console.log(session);
+
+  const access_studentId = session?.user.studentId;
 
   const date = new Date();
   const [startDate, setStartDate] = useState(null);
@@ -35,7 +34,7 @@ function SellItem() {
   };
 
   const defaultdata = {
-    studentId: "1236",
+    studentId: access_studentId,
     productName: "",
     description: "",
     quantity: 0,
@@ -153,6 +152,7 @@ function SellItem() {
 
           const updatedMeta = {
             ...meta,
+            studentId: access_studentId,
             image: imageMetaData,
           };
           console.log(JSON.stringify(updatedMeta));

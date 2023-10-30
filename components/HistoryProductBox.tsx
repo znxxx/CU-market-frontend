@@ -157,7 +157,7 @@ export function HistoryProductBox({ product, sendQuery }: ProductBoxProps) {
               {product.buyerId !== null ? (
                 <div>{`bid by ${product.buyerId}`}</div>
               ) : (
-                <div>bid by anonymous</div>
+                <div>no one bid yet</div>
               )}
             </div>
             {secondsLeft > 0 && product.available ? (

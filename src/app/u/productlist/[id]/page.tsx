@@ -156,11 +156,9 @@ function Bidpage({ params }) {
 
   // console.log(product.image?.at(0));
   // console.log(biddingData?.bidHistory?.at(0).studentId);
-  console.log(access_studentId === biddingData?.bidHistory?.at(0).studentId);
+  // console.log(access_studentId === biddingData?.bidHistory?.at(0).studentId);
   // console.log(access_studentId);
   // console.log(biddingData?.bidHistory?.at(0).studentId);
-  
-  
 
   return (
     <>

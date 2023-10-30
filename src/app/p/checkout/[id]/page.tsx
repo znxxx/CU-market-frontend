@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function BuyingConclusionPage({ params }) {
   const [email, setEmail] = useState("");
@@ -13,17 +13,24 @@ export default function BuyingConclusionPage({ params }) {
   const access_token = session?.user.access_token;
   const access_paotungToken = session?.user.paotungToken;
   const [lightbulb, setLightbulb] = useState<number | null>(null);
+  const [receiverId, setReceiverId] = useState("");
+  const [endPrice, setEndPrice] = useState(0);
 
-  async function
-  const resProduct = await axios.get(
-    `https://localhost:4000/product/details/${params.id}`
-  ,{
-    headers: {Authorization: `Bearer ${access_token}`},
-  });
-
-
-  const receiverId = "";
-  const endPrice = "";
+  useEffect(() => {
+    async function getProductDetail() {
+      if (status === "loading") return;
+      const resProduct = await axios.get(
+        `https://localhost:4000/product/details/${params.id}`,
+        {
+          headers: { Authorization: `Bearer ${access_token}` },
+        }
+      );
+      const productDetail = resProduct.data.json();
+      setReceiverId(productDetail.paotungId);
+      setEndPrice(productDetail.endPrice);
+    }
+    getProductDetail();
+  }, [status]);
 
   async function handlePay(e) {
     e.preventDefault();
@@ -52,23 +59,9 @@ export default function BuyingConclusionPage({ params }) {
       <div>Product</div>
       <div className="flex flex-col">
         <div>Pay with Paotung</div>
-        <form className="flex flex-col">
-          <label className="ml-7 mt-3">Email</label>
-          <input
-            type="text"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <label className="ml-7 mt-3">Password</label>
-          <input
-            type="text"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={(e) => handlePay(e)}>Pay</button>
-        </form>
+        <div>{`Paying to: ${receiverId}`}</div>
+        <div>{`${endPrice}`}</div>
+        <button onClick={(e) => handlePay(e)}>Pay</button>
       </div>
     </div>
   );
