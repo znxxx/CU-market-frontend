@@ -56,6 +56,18 @@ function Register() {
           console.log("res", res);
         })
         .then(() =>
+          fetch("https://paotooong.thinc.in.th/v1/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: dataToSend.email,
+              password: dataToSend.password,
+              firstName: dataToSend.firstName,
+              familyName: dataToSend.lastName,
+            }),
+          })
+        )
+        .then(() =>
           Swal.fire({
             title: "Register Complete",
             text: "You will direct to homepage in 3 seconds.",

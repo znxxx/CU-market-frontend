@@ -75,7 +75,7 @@ const LoginPage = async ({
             Password
           </label>
           <input
-            type="text"
+            type="password"
             name="password"
             className="self-stretch shadow-[4px_4px_6px_5px_rgba(0,0,0,0.15)] bg-[#40477B] mt-2.5 pt-5 pb-5 px-5 rounded-[50px] max-md:max-w-full max-md:pl-2"
           />

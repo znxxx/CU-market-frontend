@@ -10,10 +10,10 @@ export default function BuyingConclusionPage() {
   const [error, setError] = useState(false);
 
   const { data: session, status } = useSession();
-  const access_paotungToken = session?.user.paotungToken;
+//   const access_paotungToken = session?.user.paotungToken;
   const [lightbulb, setLightbulb] = useState<number | null>(null);
 
-  const receiverId = ""; //insert reveiverID
+  const receiverId = "";
 
   async function handlePay(e) {
     e.preventDefault();
@@ -39,11 +39,11 @@ export default function BuyingConclusionPage() {
   }
 
   return (
-    <div className="bg-[#353966] h-full flex text-black">
+    <div className="bg-[#353966] h-full flex text-stone-100">
       <div>Product</div>
       <div className="flex flex-col">
         <div>Pay with Paotung</div>
-        <form className="flex flex-">
+        <form className="flex flex-col">
           <label className="ml-7 mt-3">Email</label>
           <input
             type="text"

@@ -10,6 +10,9 @@ import Loading from "../../../../../components/loading";
 import { useSession } from "next-auth/react";
 
 function History() {
+  const { data: session, status } = useSession();
+  const access_token = session?.user.access_token;
+
   const [product, setProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showReview, setShowReview] = useState(false);
