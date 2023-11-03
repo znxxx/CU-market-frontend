@@ -109,35 +109,44 @@ export default function BuyingConclusionPage({
   return (
     <div className="bg-[#353966] h-full flex text-stone-100 p-10">
       <div className="basis-1/2 bg-[#40477B] rounded-3xl m-10 p-8 flex flex-col">
-        <h1>Product Detail</h1>
-        {productDetail === null ? (
-          "loading"
-        ) : (
-          <>
-            <h2>{productDetail.productName}</h2>
-            <Image
-              alt={
-                productDetail.image.length > 0
-                  ? productDetail?.image[0].key
-                  : "Sample img"
-              }
-              className="basis-1/6 aspect-auto object-cover object-center rounded-2xl"
-              src={
-                productDetail.image.length > 0
-                  ? productDetail?.image[0].url
-                  : "/images/Rectangle 23.png"
-              }
-              width={220}
-              height={180}
-            />
-          </>
-        )}
+        <h1 className=" font-black text-2xl text-center">Product Detail</h1>
+        <div className="flex justify-center flex-col">
+          {productDetail === null ? (
+            "loading"
+          ) : (
+            <>
+              <h2>{productDetail.productName}</h2>
+              <div className="items-center my-auto">
+                <Image
+                  alt={
+                    productDetail.image.length > 0
+                      ? productDetail?.image[0].key
+                      : "Sample img"
+                  }
+                  className="basis-1/6 aspect-auto object-cover object-center rounded-2xl"
+                  src={
+                    productDetail.image.length > 0
+                      ? productDetail?.image[0].url
+                      : "/images/Rectangle 23.png"
+                  }
+                  width={220}
+                  height={180}
+                />
+              </div>
+            </>
+          )}
+        </div>
       </div>
-      <div className="basis-1/2 bg-[#40477B] rounded-3xl m-10 p-8 flex flex-col">
-        <div>Pay with Paotung</div>
-        <div>{`Paying to: ${receiverId}`}</div>
-        <div>{`Price: ${endPrice}`}</div>
-        <button onClick={(e) => handlePay(e)}>Pay</button>
+      <div className="basis-1/2 bg-[#40477B] rounded-3xl m-10 p-8 flex flex-col gap-3">
+        <div className=" font-black text-lg">Pay with Paotung</div>
+        <div className="font-black text-lg">{`Paying to: ${receiverId}`}</div>
+        <div className="font-black text-2xl">{`${endPrice} bulbs`}</div>
+        <button
+          className="h-[40px] w-[60px] bg-[#FF8BBC] justify-center items-center rounded-[50px]"
+          onClick={(e) => handlePay(e)}
+        >
+          <div className="text-lg font-semibold text-center py-auto">Pay</div>
+        </button>
       </div>
     </div>
   );

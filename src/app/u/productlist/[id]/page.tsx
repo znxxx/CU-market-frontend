@@ -161,11 +161,13 @@ function Bidpage({ params }) {
         setTimeout(() => {
           setShowWinComponent(true);
         }, 10000);
+        socket.emit("bidEnd", `bid-${params.id}`);
         linkPage(`/p/checkout/${params.id}`);
       } else {
         setTimeout(() => {
           setShowWinComponent(false);
         }, 10000);
+        socket.emit("bidEnd", `bid-${params.id}`);
         linkPage("/u");
       }
     } else if (days < -2 || hours < -2 || minutes < -2 || seconds < -2) {
